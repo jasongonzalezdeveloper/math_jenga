@@ -1,6 +1,9 @@
 import Image from "next/image";
+import useStore from "../store/useStore";
 
 export default function Home() {
+  const { count, increase, decrease } = useStore();
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
       <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
@@ -58,6 +61,23 @@ export default function Home() {
           >
             Documentation
           </a>
+        </div>
+        <div className="mt-10">
+          <h2 className="text-2xl font-bold">Counter: {count}</h2>
+          <div className="flex gap-4">
+            <button
+              onClick={increase}
+              className="rounded bg-blue-500 px-4 py-2 text-white transition-colors hover:bg-blue-600"
+            >
+              Increase
+            </button>
+            <button
+              onClick={decrease}
+              className="rounded bg-red-500 px-4 py-2 text-white transition-colors hover:bg-red-600"
+            >
+              Decrease
+            </button>
+          </div>
         </div>
       </main>
     </div>
