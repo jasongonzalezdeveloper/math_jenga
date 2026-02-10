@@ -1,39 +1,45 @@
+"use client";
 import React, { useEffect, useState } from "react";
 import { Cube } from "@/models/Cube";
+import { useStore } from "../store/useStore";
 
 const COLORS: Record<number, string> = {
-  1: "red",
-  2: "blue",
-  3: "green",
-  4: "yellow",
-  5: "orange",
-  6: "purble",
+  1: "#0070f3",
+  2: "#388e4a",
+  3: "#da3036",
+  4: "#f1a10d",
+  5: "#a1a1a1",
+  6: "#ad1966",
 };
 
 const Jenga: React.FC = () => {
-  const [cube, setCube] = useState<Cube[][]>();
+  const { setQuestion, setAnswer } = useStore();
 
-  const setQuestion = () => {
-    let question: string = "";
-    let answer: number = 0;
+  const [jengaTower, setJengaTower] = useState<Cube[][]>();
+  const [isRightSide, setIsRightSide] = useState(false);
+
+  const setCubeQuestion = () => {
+    const firstNumRandom = Math.floor(Math.random() * 10) + 1;
+    let question: string = firstNumRandom.toString();
+    let answer: number = firstNumRandom;
 
     const operationQuantity = Math.floor(Math.random() * 4) + 1;
 
     for (let i = 0; i < operationQuantity; i++) {
-      const opRandom = Math.floor(Math.random() * 3) + 1;
+      const opRandom = Math.floor(Math.random() * 2) + 1;
       const numRandom = Math.floor(Math.random() * 10) + 1;
       if (opRandom == 1) {
-        question += "+ " + numRandom;
+        question += " + " + numRandom;
         answer += numRandom;
       }
       if (opRandom == 2) {
-        question += "- " + numRandom;
+        question += " - " + numRandom;
         answer -= numRandom;
       }
-      if (opRandom == 3) {
-        question += "* " + numRandom;
-        answer *= numRandom;
-      }
+      // if (opRandom == 3) {
+      //   question += " * " + numRandom;
+      //   answer *= numRandom;
+      // }
     }
 
     return {
@@ -43,11 +49,11 @@ const Jenga: React.FC = () => {
   };
 
   const initializeJenga = () => {
-    const newCube: Cube[][] = Array.from({ length: 18 }, (_, row) =>
+    const tower: Cube[][] = Array.from({ length: 18 }, (_, row) =>
       Array.from({ length: 3 }, (_, col) => {
         const id = row * 3 + col + 1;
         const color = COLORS[Math.floor(Math.random() * 6) + 1];
-        const cubeQuestion = setQuestion();
+        const cubeQuestion = setCubeQuestion();
         return {
           id,
           color,
@@ -62,32 +68,73 @@ const Jenga: React.FC = () => {
         };
       }),
     );
-    setCube(newCube);
+    setJengaTower(tower);
   };
 
   useEffect(() => {
     initializeJenga();
   }, []);
 
-  const handleClick = () => {};
+  const handleClick = (block?: Cube) => {
+    if (block) {
+      setQuestion(block.question);
+      setAnswer(block.answer);
+    }
+  };
+
+  const handleRotate = () => {
+    setIsRightSide((prev) => !prev);
+  };
 
   return (
-    <div>
-      {cube &&
-        cube.map((row, rowIndex) => (
-          <div key={rowIndex} style={{ display: "flex" }}>
-            {row.map((block) => (
-              <div
-                key={block.id}
-                className="w-12 h-5 m-0.5 flex justify-center items-center border border-black"
-                style={{ backgroundColor: block.color }}
-                onClick={handleClick}
-              >
-                {block.id}
-              </div>
-            ))}
-          </div>
-        ))}
+    <div className="flex flex-col items-center justify-center">
+      <div className="transform-gpu transition-transform duration-500">
+        {jengaTower &&
+          jengaTower
+            .slice()
+            .reverse()
+            .map((row, revIndex) => {
+              const actualRowIndex = jengaTower.length - 1 - revIndex;
+              const isEven = actualRowIndex % 2 === 0;
+              const orientationHorizontal = isRightSide ? isEven : !isEven;
+              return (
+                <div
+                  key={actualRowIndex}
+                  className={`flex items-center justify-center my-1 h-10 ${isEven ? "px-1" : ""}`}
+                  style={
+                    !orientationHorizontal
+                      ? {
+                          backgroundColor:
+                            row[0].color || row[1].color || row[2].color,
+                        }
+                      : {}
+                  }
+                >
+                  {row.map((block) => (
+                    <div
+                      key={block.id}
+                      className={`${
+                        orientationHorizontal
+                          ? "flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none cursor-pointer h-10 w-15 "
+                          : "hidden"
+                      }`}
+                      style={{ backgroundColor: block.color }}
+                      onClick={() => handleClick(block)}
+                    >
+                      <span className="text-sm font-medium">{block.id}</span>
+                    </div>
+                  ))}
+                </div>
+              );
+            })}
+      </div>
+
+      <button
+        onClick={handleRotate}
+        className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
+      >
+        {isRightSide ? "Girar a la izquierda" : "Girar a la derecha"}
+      </button>
     </div>
   );
 };
