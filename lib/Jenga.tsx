@@ -12,11 +12,14 @@ const COLORS: Record<number, string> = {
   6: "#ad1966",
 };
 
-const Jenga: React.FC = () => {
-  const { setQuestion, setAnswer } = useStore();
+interface JengaProps {
+  isRightSide: boolean;
+}
+
+const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
+  const { cubeClicked, setCubeClicked, isCorrect, setIsCorrect } = useStore();
 
   const [jengaTower, setJengaTower] = useState<Cube[][]>();
-  const [isRightSide, setIsRightSide] = useState(false);
 
   const setCubeQuestion = () => {
     const firstNumRandom = Math.floor(Math.random() * 10) + 1;
@@ -61,10 +64,7 @@ const Jenga: React.FC = () => {
           col,
           shake: 0,
           question: cubeQuestion.question,
-          answer: cubeQuestion.answer,
-          isAnswerCorrect: function (userAnswer: number) {
-            return userAnswer === this.answer;
-          },
+          answer: cubeQuestion.answer
         };
       }),
     );
@@ -75,16 +75,68 @@ const Jenga: React.FC = () => {
     initializeJenga();
   }, []);
 
-  const handleClick = (block?: Cube) => {
-    if (block) {
-      setQuestion(block.question);
-      setAnswer(block.answer);
+  const handleClick = (cube?: Cube) => {
+    if (cube && !cube.isEmpty) {
+      setCubeClicked(cube);
+    } else {
+      if (isCorrect && cube && cubeClicked) {
+        setJengaTower((prev) => {
+          if (!prev) return prev;
+
+          const newTower = prev.map((row) =>
+            row.map((c) => {
+              if (c.row === cube.row && c.col === cube.col) {
+                return {
+                  ...cubeClicked,
+                  row: c.row,
+                  col: c.col,
+                  isEmpty: false,
+                };
+              }
+              if (c.row === cubeClicked.row && c.col === cubeClicked.col) {
+                return {
+                  ...c,
+                  isEmpty: true,
+                  color: 'white',
+                };
+              }
+              return c;
+            })
+          );
+
+          return newTower;
+        });
+        setCubeClicked(null);
+        setIsCorrect(false);
+      }
     }
   };
 
-  const handleRotate = () => {
-    setIsRightSide((prev) => !prev);
-  };
+  useEffect(() => {
+    if (isCorrect && needJengaTowerEmptyCubes()) {
+      const tower: Cube[] = Array.from({ length: 3 }, (_, col) => {
+        const id = jengaTower!.length * 3 + col + 1;
+        const color = 'white';
+        return {
+          id,
+          color,
+          row: jengaTower!.length,
+          col,
+          shake: 0,
+          question: '',
+          answer: 0,
+          isEmpty: true,
+        };
+      });
+      setJengaTower((prev) => [...(prev || []), tower]);
+    }
+  }, [isCorrect]);
+
+  const needJengaTowerEmptyCubes = () => {
+    const jengaLength = jengaTower?.length;
+    const emptyCubesInLastRow = jengaTower?.[jengaLength! - 1].filter(cube => cube.isEmpty).length ?? 0;
+    return emptyCubesInLastRow === 0;
+  }
 
   return (
     <div className="flex flex-col items-center justify-center">
@@ -104,37 +156,29 @@ const Jenga: React.FC = () => {
                   style={
                     !orientationHorizontal
                       ? {
-                          backgroundColor:
-                            row[0].color || row[1].color || row[2].color,
-                        }
+                        backgroundColor:
+                          row[0].color || row[1].color || row[2].color,
+                      }
                       : {}
                   }
                 >
-                  {row.map((block) => (
+                  {row.map((cube) => (
                     <div
-                      key={block.id}
-                      className={`${
-                        orientationHorizontal
-                          ? "flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none cursor-pointer h-10 w-15 "
-                          : "hidden"
-                      }`}
-                      style={{ backgroundColor: block.color }}
-                      onClick={() => handleClick(block)}
+                      key={cube.id}
+                      className={`${orientationHorizontal
+                        ? "flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none cursor-pointer h-10 w-15 "
+                        : "hidden"
+                        }`}
+                      style={{ backgroundColor: cube.color }}
+                      onClick={() => handleClick(cube)}
                     >
-                      <span className="text-sm font-medium">{block.id}</span>
+                      <span className="text-sm font-medium">{cube.id}</span>
                     </div>
                   ))}
                 </div>
               );
             })}
       </div>
-
-      <button
-        onClick={handleRotate}
-        className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors"
-      >
-        {isRightSide ? "Girar a la izquierda" : "Girar a la derecha"}
-      </button>
     </div>
   );
 };

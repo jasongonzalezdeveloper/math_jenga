@@ -6,15 +6,11 @@ export interface Cube {
     shake: number,
     question: string,
     answer: number,
-
-    isAnswerCorrect(userAnswer: number): boolean;
+    isEmpty?: boolean,
 }
 
 export const createCube = (cube: Cube): Cube => {
     return {
-        ...cube,
-        isAnswerCorrect: function (userAnswer: number) {
-            return userAnswer === this.answer;
-        }
+        ...cube
     };
 };
