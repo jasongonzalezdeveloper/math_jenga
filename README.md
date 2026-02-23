@@ -12,6 +12,22 @@ An interactive educational game that combines the classic Jenga tower with mathe
 
 Math Jenga is an engaging web-based learning game that helps children practice arithmetic operations (addition and subtraction) in a playful environment. Players select cubes from the tower, solve math problems, and strategically place them back on top, all while trying to keep the tower stable.
 
+## 📸 Screenshots
+
+<div align="center">
+  
+### Main Game Interface
+![Math Jenga Tower](./public/screenshots/tower-view.png)
+*The colorful Jenga tower with numbered cubes*
+
+### Math Challenge Modal
+![Math Question](./public/screenshots/question-modal.png)
+*Interactive modal with math problems*
+
+</div>
+
+> **Note:** Add your screenshots to the `public/screenshots/` directory to display them here.
+
 ## ✨ Features
 
 - 🎲 **Interactive Jenga Tower** - Click on numbered cubes to select them
