@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Cube } from "@/models/Cube";
 import { useStore } from "../store/useStore";
 
@@ -19,9 +19,9 @@ interface JengaProps {
 const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
   const { cubeClicked, setCubeClicked, isCorrect, setIsCorrect } = useStore();
 
-  const [jengaTower, setJengaTower] = useState<Cube[][]>();
+  const [jengaTower, setJengaTower] = useState<Cube[][]>([]);
 
-  const setCubeQuestion = () => {
+  const setCubeQuestion = useCallback(() => {
     const firstNumRandom = Math.floor(Math.random() * 10) + 1;
     let question: string = firstNumRandom.toString();
     let answer: number = firstNumRandom;
@@ -31,27 +31,27 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
     for (let i = 0; i < operationQuantity; i++) {
       const opRandom = Math.floor(Math.random() * 2) + 1;
       const numRandom = Math.floor(Math.random() * 10) + 1;
-      if (opRandom == 1) {
+      if (opRandom === 1) {
         question += " + " + numRandom;
         answer += numRandom;
       }
-      if (opRandom == 2) {
+      if (opRandom === 2) {
         question += " - " + numRandom;
         answer -= numRandom;
       }
-      // if (opRandom == 3) {
+      // if (opRandom === 3) {
       //   question += " * " + numRandom;
       //   answer *= numRandom;
       // }
     }
 
     return {
-      question: question,
-      answer: answer,
+      question,
+      answer,
     };
-  };
+  }, []);
 
-  const initializeJenga = () => {
+  const initializeJenga = useCallback(() => {
     const tower: Cube[][] = Array.from({ length: 18 }, (_, row) =>
       Array.from({ length: 3 }, (_, col) => {
         const id = row * 3 + col + 1;
@@ -64,63 +64,68 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
           col,
           shake: 0,
           question: cubeQuestion.question,
-          answer: cubeQuestion.answer
+          answer: cubeQuestion.answer,
         };
       }),
     );
     setJengaTower(tower);
-  };
+  }, [setCubeQuestion]);
 
   useEffect(() => {
     initializeJenga();
-  }, []);
+  }, [initializeJenga]);
 
-  const handleClick = (cube?: Cube) => {
+  const handleClick = useCallback((cube?: Cube) => {
     if (cube && !cube.isEmpty) {
       setCubeClicked(cube);
-    } else {
-      if (isCorrect && cube && cubeClicked) {
-        setJengaTower((prev) => {
-          if (!prev) return prev;
+    } else if (isCorrect && cube && cubeClicked) {
+      setJengaTower((prev) => {
+        if (prev.length === 0) return prev;
 
-          const newTower = prev.map((row) =>
-            row.map((c) => {
-              if (c.row === cube.row && c.col === cube.col) {
-                return {
-                  ...cubeClicked,
-                  row: c.row,
-                  col: c.col,
-                  isEmpty: false,
-                };
-              }
-              if (c.row === cubeClicked.row && c.col === cubeClicked.col) {
-                return {
-                  ...c,
-                  isEmpty: true,
-                  color: 'white',
-                };
-              }
-              return c;
-            })
-          );
+        const newTower = prev.map((row) =>
+          row.map((c) => {
+            if (c.row === cube.row && c.col === cube.col) {
+              return {
+                ...cubeClicked,
+                row: c.row,
+                col: c.col,
+                isEmpty: false,
+              };
+            }
+            if (c.row === cubeClicked.row && c.col === cubeClicked.col) {
+              return {
+                ...c,
+                isEmpty: true,
+                color: 'white',
+              };
+            }
+            return c;
+          })
+        );
 
-          return newTower;
-        });
-        setCubeClicked(null);
-        setIsCorrect(false);
-      }
+        return newTower;
+      });
+      setCubeClicked(null);
+      setIsCorrect(false);
     }
-  };
+  }, [isCorrect, cubeClicked, setCubeClicked, setIsCorrect]);
+
+  const needJengaTowerEmptyCubes = useCallback(() => {
+    if (!jengaTower || jengaTower.length === 0) return false;
+    const lastRow = jengaTower[jengaTower.length - 1];
+    const emptyCubesInLastRow = lastRow.filter(cube => cube.isEmpty).length;
+    return emptyCubesInLastRow === 0;
+  }, [jengaTower]);
 
   useEffect(() => {
-    if (isCorrect && needJengaTowerEmptyCubes()) {
+    if (isCorrect && jengaTower.length > 0 && needJengaTowerEmptyCubes()) {
       const tower: Cube[] = Array.from({ length: 3 }, (_, col) => {
-        const id = jengaTower!.length * 3 + col + 1;
+        const id = jengaTower.length * 3 + col + 1;
         const color = 'white';
         return {
           id,
           color,
-          row: jengaTower!.length,
+          row: jengaTower.length,
           col,
           shake: 0,
           question: '',
@@ -128,20 +133,14 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
           isEmpty: true,
         };
       });
-      setJengaTower((prev) => [...(prev || []), tower]);
+      setJengaTower((prev) => [...prev, tower]);
     }
-  }, [isCorrect]);
-
-  const needJengaTowerEmptyCubes = () => {
-    const jengaLength = jengaTower?.length;
-    const emptyCubesInLastRow = jengaTower?.[jengaLength! - 1].filter(cube => cube.isEmpty).length ?? 0;
-    return emptyCubesInLastRow === 0;
-  }
+  }, [isCorrect, jengaTower, needJengaTowerEmptyCubes]);
 
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="transform-gpu transition-transform duration-500">
-        {jengaTower &&
+        {jengaTower.length > 0 &&
           jengaTower
             .slice()
             .reverse()

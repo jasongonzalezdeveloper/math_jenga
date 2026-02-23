@@ -1,20 +1,35 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 
 const QuestionModal: React.FC = () => {
-  const [isVisible, setIsVisible] = useState<boolean>(false);
-
-
-  const { cubeClicked, clearCube, decrease, setIsCorrect } =
-    useStore();
+  const { cubeClicked, decrease, setIsCorrect } = useStore();
   const { question, answer } = cubeClicked || {};
   const [userAnswer, setUserAnswer] = useState("");
-  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(
-    null,
-  );
+  const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleClose = useCallback(() => {
+    setUserAnswer("");
+    setFeedback(null);
+    setIsOpen(false);
+  }, []);
+
+  const handleSubmit = useCallback(() => {
+    const userNum = parseInt(userAnswer, 10);
+    if (userNum === answer) {
+      setFeedback("correct");
+      setIsCorrect(true);
+      setTimeout(() => {
+        handleClose();
+      }, 1000);
+    } else {
+      decrease();
+      setFeedback("incorrect");
+      setIsCorrect(false);
+    }
+  }, [userAnswer, answer, setIsCorrect, decrease, handleClose]);
 
   useEffect(() => {
     if (cubeClicked) {
@@ -29,27 +44,6 @@ const QuestionModal: React.FC = () => {
       inputRef.current.focus();
     }
   }, [isOpen]);
-
-  const handleSubmit = () => {
-    const userNum = parseInt(userAnswer);
-    if (userNum === answer) {
-      setFeedback("correct");
-      setIsCorrect(true);
-      setTimeout(() => {
-        handleClose();
-      }, 2000);
-    } else {
-      decrease();
-      setFeedback("incorrect");
-      setIsCorrect(false);
-    }
-  };
-
-  const handleClose = () => {
-    setUserAnswer("");
-    setFeedback(null);
-    setIsOpen(false);
-  };
 
   if (!isOpen) return null;
 
@@ -71,17 +65,16 @@ const QuestionModal: React.FC = () => {
           onChange={(e) => setUserAnswer(e.target.value)}
           placeholder="Escribe tu respuesta"
           className="w-full px-4 py-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          onKeyUp={(e) => e.key === "Enter" && handleSubmit()}
+          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
           disabled={feedback !== null}
         />
 
         {feedback && (
           <div
-            className={`p-3 rounded mb-4 text-center font-semibold ${
-              feedback === "correct"
-                ? "bg-green-100 text-green-800"
-                : "bg-red-100 text-red-800"
-            }`}
+            className={`p-3 rounded mb-4 text-center font-semibold ${feedback === "correct"
+              ? "bg-green-100 text-green-800"
+              : "bg-red-100 text-red-800"
+              }`}
           >
             {feedback === "correct"
               ? "¡Correcto!"
