@@ -17,9 +17,10 @@ interface JengaProps {
 }
 
 const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
-  const { cubeClicked, setCubeClicked, isCorrect, setIsCorrect } = useStore();
+  const { cubeClicked, setCubeClicked, isCorrect, setIsCorrect, loseGame } = useStore();
 
   const [jengaTower, setJengaTower] = useState<Cube[][]>([]);
+  const [hoveredCubeId, setHoveredCubeId] = useState<number | null>(null);
 
   const setCubeQuestion = useCallback(() => {
     const firstNumRandom = Math.floor(Math.random() * 10) + 1;
@@ -62,7 +63,7 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
           color,
           row,
           col,
-          shake: 0,
+          shake: Math.floor(Math.random() * 81) + 20,
           question: cubeQuestion.question,
           answer: cubeQuestion.answer,
         };
@@ -79,36 +80,43 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
     if (cube && !cube.isEmpty) {
       setCubeClicked(cube);
     } else if (isCorrect && cube && cubeClicked) {
-      setJengaTower((prev) => {
-        if (prev.length === 0) return prev;
+      if (jengaTower.length === 0) return;
 
-        const newTower = prev.map((row) =>
-          row.map((c) => {
-            if (c.row === cube.row && c.col === cube.col) {
-              return {
-                ...cubeClicked,
-                row: c.row,
-                col: c.col,
-                isEmpty: false,
-              };
-            }
-            if (c.row === cubeClicked.row && c.col === cubeClicked.col) {
-              return {
-                ...c,
-                isEmpty: true,
-                color: 'white',
-              };
-            }
-            return c;
-          })
-        );
+      const sourceRow = cubeClicked.row;
+      const newTower = jengaTower.map((row) =>
+        row.map((c) => {
+          if (c.row === cube.row && c.col === cube.col) {
+            return {
+              ...cubeClicked,
+              row: c.row,
+              col: c.col,
+              isEmpty: false,
+            };
+          }
+          if (c.row === cubeClicked.row && c.col === cubeClicked.col) {
+            return {
+              ...c,
+              isEmpty: true,
+              color: 'white',
+              shake: 0,
+            };
+          }
+          return c;
+        })
+      );
 
-        return newTower;
-      });
+      setJengaTower(newTower);
+
+      const removedThreeFromSameRow = newTower[sourceRow].every((block) => block.isEmpty);
+      if (removedThreeFromSameRow) {
+        loseGame();
+      }
+
       setCubeClicked(null);
+      setHoveredCubeId(null);
       setIsCorrect(false);
     }
-  }, [isCorrect, cubeClicked, setCubeClicked, setIsCorrect]);
+  }, [isCorrect, cubeClicked, setCubeClicked, setIsCorrect, jengaTower, loseGame]);
 
   const needJengaTowerEmptyCubes = useCallback(() => {
     if (!jengaTower || jengaTower.length === 0) return false;
@@ -137,6 +145,23 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
     }
   }, [isCorrect, jengaTower, needJengaTowerEmptyCubes]);
 
+  const getSideRowColor = useCallback((row: Cube[]) => {
+    const firstVisibleCube = row.find((cube) => !cube.isEmpty);
+    return firstVisibleCube?.color ?? "white";
+  }, []);
+
+  const getShakeAngle = useCallback((shake: number) => {
+    const normalizedShake = Math.min(100, Math.max(0, shake));
+    const maxAngle = 2 + (normalizedShake / 100) * 10;
+    return `${maxAngle}deg`;
+  }, []);
+
+  const getShakeDuration = useCallback((shake: number) => {
+    const normalizedShake = Math.min(100, Math.max(0, shake));
+    const durationMs = 500 - normalizedShake * 3;
+    return `${Math.max(160, durationMs)}ms`;
+  }, []);
+
   return (
     <div className="flex flex-col items-center justify-center">
       <div className="transform-gpu transition-transform duration-500">
@@ -155,25 +180,41 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide }) => {
                   style={
                     !orientationHorizontal
                       ? {
-                        backgroundColor:
-                          row[0].color || row[1].color || row[2].color,
+                        backgroundColor: getSideRowColor(row),
                       }
                       : {}
                   }
                 >
-                  {row.map((cube) => (
-                    <div
-                      key={cube.id}
-                      className={`${orientationHorizontal
-                        ? "flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none cursor-pointer h-10 w-15 "
-                        : "hidden"
-                        }`}
-                      style={{ backgroundColor: cube.color }}
-                      onClick={() => handleClick(cube)}
-                    >
-                      <span className="text-sm font-medium">{cube.id}</span>
-                    </div>
-                  ))}
+                  {row.map((cube) => {
+                    const cubeShake = Math.min(100, Math.max(0, cube.shake ?? 0));
+                    const isHoveredCube = hoveredCubeId === cube.id && !cube.isEmpty;
+                    const cubeStyle: React.CSSProperties & {
+                      [key: string]: string | number;
+                    } = {
+                      backgroundColor: cube.color,
+                    };
+
+                    if (isHoveredCube && cubeShake > 0) {
+                      cubeStyle.animation = `tilt-shaking ${getShakeDuration(cubeShake)} ease-in-out infinite`;
+                      cubeStyle["--shake-angle"] = getShakeAngle(cubeShake);
+                    }
+
+                    return (
+                      <div
+                        key={cube.id}
+                        className={`${orientationHorizontal
+                          ? "flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none cursor-pointer h-10 w-15 "
+                          : "hidden"
+                          }`}
+                        style={cubeStyle}
+                        onClick={() => handleClick(cube)}
+                        onMouseEnter={() => setHoveredCubeId(cube.id)}
+                        onMouseLeave={() => setHoveredCubeId(null)}
+                      >
+                        <span className="text-sm font-medium">{cube.id}</span>
+                      </div>
+                    );
+                  })}
                 </div>
               );
             })}
