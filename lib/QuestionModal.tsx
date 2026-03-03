@@ -5,7 +5,7 @@ import { useAppTranslation } from "@/hooks/useAppTranslation";
 
 const QuestionModal: React.FC = () => {
   const { t } = useAppTranslation();
-  const { cubeClicked, decrease, setIsCorrect, clearCube } = useStore();
+  const { cubeClicked, decrease, setIsCorrect, clearCube, lifes } = useStore();
   const { question, answer } = cubeClicked || {};
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
@@ -16,7 +16,7 @@ const QuestionModal: React.FC = () => {
     : null;
   const isDismissedForPlacement =
     currentCubeKey !== null && dismissedCubeKey === currentCubeKey;
-  const isOpen = Boolean(cubeClicked) && !isDismissedForPlacement;
+  const isOpen = Boolean(cubeClicked) && !isDismissedForPlacement && lifes > 0;
 
   const closeForPlacement = useCallback(() => {
     setUserAnswer("");
@@ -33,7 +33,16 @@ const QuestionModal: React.FC = () => {
   }, [clearCube, setIsCorrect]);
 
   const handleSubmit = useCallback(() => {
-    const userNum = parseInt(userAnswer, 10);
+    const normalizedAnswer = userAnswer.trim();
+    if (normalizedAnswer === "" || normalizedAnswer === "-") {
+      return;
+    }
+
+    const userNum = parseInt(normalizedAnswer, 10);
+    if (Number.isNaN(userNum)) {
+      return;
+    }
+
     if (userNum === answer) {
       setFeedback("correct");
       setIsCorrect(true);
@@ -84,9 +93,17 @@ const QuestionModal: React.FC = () => {
 
         <input
           ref={inputRef}
-          type="number"
+          type="text"
+          inputMode="numeric"
+          pattern="-?[0-9]*"
           value={userAnswer}
-          onChange={(e) => setUserAnswer(e.target.value)}
+          onChange={(e) => {
+            const nextValue = e.target.value.replace(/[^0-9-]/g, "");
+            const normalizedValue = nextValue
+              .replace(/(?!^)-/g, "")
+              .replace(/-{2,}/g, "-");
+            setUserAnswer(normalizedValue);
+          }}
           placeholder={t("question.placeholder")}
           className="w-full px-4 py-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
           onKeyDown={(e) => e.key === "Enter" && handleSubmit()}

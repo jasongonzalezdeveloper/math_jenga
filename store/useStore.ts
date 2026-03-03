@@ -9,6 +9,7 @@ interface StoreState {
     loseGame: () => void;
     settings: GameSettings;
     setDefeatConditions: (defeatConditions: DefeatCondition[]) => void;
+    toggleDefeatCondition: (condition: DefeatCondition) => void;
     resetLifes: () => void;
     cubeClicked: Cube | null;
     setCubeClicked: (cube: Cube | null) => void;
@@ -30,6 +31,18 @@ export const useStore = create<StoreState>((set) => ({
             defeatConditions,
         },
     })),
+    toggleDefeatCondition: (condition: DefeatCondition) => set((state) => {
+        const hasCondition = state.settings.defeatConditions.includes(condition);
+
+        return {
+            settings: {
+                ...state.settings,
+                defeatConditions: hasCondition
+                    ? state.settings.defeatConditions.filter((item) => item !== condition)
+                    : [...state.settings.defeatConditions, condition],
+            },
+        };
+    }),
     resetLifes: () => set((state) => ({
         lifes: state.settings.defeatConditions.includes('oneLife') ? 1 : 3,
         cubeClicked: null,

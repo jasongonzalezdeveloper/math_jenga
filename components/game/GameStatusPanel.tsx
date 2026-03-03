@@ -21,7 +21,7 @@ export const GameStatusPanel: React.FC<GameStatusPanelProps> = ({
     const { t } = useAppTranslation();
 
     return (
-        <div className="absolute top-0 left-1/2 z-10 w-full max-w-sm -translate-x-1/2 flex flex-col items-center lg:left-0 lg:top-1/2 lg:max-w-none lg:w-[30%] lg:translate-x-0 lg:-translate-y-1/2">
+        <div className="absolute top-0 mt-16 left-1/2 z-10 w-full max-w-sm -translate-x-1/2 flex flex-col items-center lg:mt-0 lg:left-0 lg:top-1/2 lg:max-w-none lg:w-[30%] lg:translate-x-0 lg:-translate-y-1/2">
             {isCorrect && (
                 <div className="mb-4 text-green-600 font-bold text-lg wrap-break-word overflow-hidden" role="status" aria-live="assertive">
                     {t("statusPanel.placeOnTop")}

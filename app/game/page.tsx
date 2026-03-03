@@ -63,7 +63,7 @@ export default function GamePage() {
                         onOpenConfig={handleBackToConfig}
                     />
 
-                    <div className="w-full flex justify-center pt-40 lg:pt-0">
+                    <div className={`w-full flex justify-center ${isCorrect ? "pt-96" : "pt-80"} lg:pt-0`}>
                         <Jenga
                             isRightSide={isRightSide}
                             onAutoRotateToSide={setIsRightSide}

@@ -1,6 +1,5 @@
 "use client";
 
-import { DefeatCondition } from "@/models/GameSettings";
 import { useStore } from "@/store/useStore";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { LanguageSelector } from "@/components/common/LanguageSelector";
@@ -10,7 +9,7 @@ import { useRouter } from "next/navigation";
 export default function ConfigPage() {
     const router = useRouter();
     const { t } = useAppTranslation();
-    const { settings, setDefeatConditions, resetLifes } = useStore();
+    const { settings, setDefeatConditions, toggleDefeatCondition, resetLifes } = useStore();
     const defaultSettingsRef = useRef<HTMLInputElement>(null);
     const oneLifeRef = useRef<HTMLInputElement>(null);
     const shakeRef = useRef<HTMLInputElement>(null);
@@ -19,16 +18,6 @@ export default function ConfigPage() {
     useEffect(() => {
         defaultSettingsRef.current?.focus();
     }, []);
-
-    const toggleDefeatCondition = useCallback((condition: DefeatCondition) => {
-        const hasCondition = settings.defeatConditions.includes(condition);
-        if (hasCondition) {
-            setDefeatConditions(settings.defeatConditions.filter((item) => item !== condition));
-            return;
-        }
-
-        setDefeatConditions([...settings.defeatConditions, condition]);
-    }, [settings.defeatConditions, setDefeatConditions]);
 
     const handleStart = useCallback(() => {
         resetLifes();

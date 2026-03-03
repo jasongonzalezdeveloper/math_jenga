@@ -1,7 +1,7 @@
 "use client";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useJengaLogic } from "@/hooks/useJengaLogic";
-import { useStore } from "../store/useStore";
+import { useStore } from "@/store/useStore";
 
 interface JengaProps {
   isRightSide: boolean;
