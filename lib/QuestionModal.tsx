@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 
 const QuestionModal: React.FC = () => {
-  const { cubeClicked, decrease, setIsCorrect } = useStore();
+  const { cubeClicked, decrease, setIsCorrect, settings } = useStore();
   const { question, answer } = cubeClicked || {};
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
