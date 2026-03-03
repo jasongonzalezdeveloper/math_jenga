@@ -12,6 +12,10 @@ An interactive educational game that combines the classic Jenga tower with mathe
 
 Math Jenga is an engaging web-based learning game that helps children practice arithmetic operations (addition and subtraction) in a playful environment. Players select cubes from the tower, solve math problems, and place them on top while trying to keep the tower stable.
 
+## 🔗 Live Demo
+
+- GitHub Pages: [https://jasongonzalezdeveloper.github.io/math_jenga/config](https://jasongonzalezdeveloper.github.io/math_jenga/config)
+
 ## 📸 Screenshots
 
 <div align="center">
@@ -24,9 +28,31 @@ Math Jenga is an engaging web-based learning game that helps children practice a
 ![Math Question](./public/screenshots/question-modal.png)
 *Interactive modal with math problems*
 
+### Configuration Screen
+![Configuration Screen](./public/screenshots/config-screen.png)
+*Game settings with keyboard-accessible options*
+
+### Shortcuts Help Modal
+![Shortcuts Help](./public/screenshots/shortcuts-modal.png)
+*Keyboard shortcuts overview modal*
+
+### Language Selector (ES/EN)
+![Language Selector](./public/screenshots/language-selector.png)
+*Language switcher with flags*
+
+### Colorblind Mode Toggle
+![Colorblind Mode](./public/screenshots/colorblind-mode.png)
+*Accessibility toggle for colorblind-friendly visuals*
+
 </div>
 
-> **Note:** Add your screenshots to the `public/screenshots/` directory to display them here.
+> **Note:** Add these screenshot files to `public/screenshots/`:
+> - `tower-view.png`
+> - `question-modal.png`
+> - `config-screen.png`
+> - `shortcuts-modal.png`
+> - `language-selector.png`
+> - `colorblind-mode.png`
 
 ## ✨ Features
 
@@ -179,17 +205,16 @@ math_jenga/
 
 This project can be deployed to GitHub Pages:
 
+Live URL:
+
+- [https://jasongonzalezdeveloper.github.io/math_jenga/config](https://jasongonzalezdeveloper.github.io/math_jenga/config)
+
 ```bash
 npm run build
 npm run export
 ```
 
 The static site will be generated in the `out` directory.
-
-### Other Platforms
-
-- **Vercel**: [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/yourusername/math_jenga)
-- **Netlify**: [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/math_jenga)
 
 ## 🤝 Contributing
 
