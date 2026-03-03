@@ -1,0 +1,126 @@
+export const resources = {
+    es: {
+        translation: {
+            config: {
+                title: "Configuración",
+                defaultTitle: "Configuración por defecto",
+                defaultDescription: "3 vidas, sin posibilidad de perder por derrumbe en torre.",
+                useDefault: "Usar configuración por defecto",
+                oneLife: "1 vida",
+                loseChance: "Posibilidad de perder",
+                startGame: "Iniciar partida",
+            },
+            game: {
+                screenReaderHint: "Usa flechas para moverte entre bloques y Enter o Espacio para activar un bloque.",
+                towerCollapsed: "Se derrumbó la torre, más suerte la próxima",
+                restart: "Reiniciar",
+            },
+            statusPanel: {
+                placeOnTop: "¡DEBES COLOCAR EL CUBO EN LA CIMA DE LA TORRE, ESCOGE UNO DE LOS CUBOS BLANCOS DISPONIBLES!",
+                lifesText: "Tienes {{count}} vidas",
+                settingsAria: "Configuración",
+                settingsTitle: "Configuración (atajo C)",
+                rotateLeft: "Girar a la izquierda",
+                rotateRight: "Girar a la derecha",
+                rotateLeftAria: "Girar la torre a la izquierda",
+                rotateRightAria: "Girar la torre a la derecha",
+                rotateTitle: "Atajo R",
+            },
+            shortcuts: {
+                infoAria: "Información de atajos",
+                infoTitle: "Atajos de teclado",
+                heading: "Atajos de teclado",
+                close: "Cerrar",
+                options: {
+                    rotate: "R: girar la torre",
+                    config: "C: abrir configuración",
+                    help: "I: abrir/cerrar esta ayuda",
+                    closeHelp: "Esc: cerrar ayuda",
+                    moveBlock: "Flechas: mover selector de bloque",
+                    activateBlock: "Enter / Espacio: activar bloque enfocado",
+                },
+            },
+            colorblind: {
+                enable: "Activar modo daltónico",
+                disable: "Desactivar modo daltónico",
+            },
+            language: {
+                label: "Idioma",
+                spanish: "Español",
+                english: "Inglés",
+            },
+            question: {
+                title: "¿Cuál es el resultado?",
+                placeholder: "Escribe tu respuesta",
+                correct: "¡Correcto!",
+                incorrect: "Incorrecto, intenta de nuevo",
+                verify: "Verificar",
+                close: "Cerrar",
+                retry: "Reintentar",
+            },
+        },
+    },
+    en: {
+        translation: {
+            config: {
+                title: "Settings",
+                defaultTitle: "Default settings",
+                defaultDescription: "3 lives, no chance to lose by tower collapse.",
+                useDefault: "Use default settings",
+                oneLife: "1 life",
+                loseChance: "Chance to lose",
+                startGame: "Start game",
+            },
+            game: {
+                screenReaderHint: "Use arrow keys to move between blocks and Enter or Space to activate a block.",
+                towerCollapsed: "The tower collapsed, better luck next time",
+                restart: "Restart",
+            },
+            statusPanel: {
+                placeOnTop: "YOU MUST PLACE THE BLOCK ON TOP OF THE TOWER, CHOOSE ONE OF THE AVAILABLE WHITE BLOCKS!",
+                lifesText: "You have {{count}} lives",
+                settingsAria: "Settings",
+                settingsTitle: "Settings (shortcut C)",
+                rotateLeft: "Rotate left",
+                rotateRight: "Rotate right",
+                rotateLeftAria: "Rotate tower to the left",
+                rotateRightAria: "Rotate tower to the right",
+                rotateTitle: "Shortcut R",
+            },
+            shortcuts: {
+                infoAria: "Shortcuts info",
+                infoTitle: "Keyboard shortcuts",
+                heading: "Keyboard shortcuts",
+                close: "Close",
+                options: {
+                    rotate: "R: rotate tower",
+                    config: "C: open settings",
+                    help: "I: open/close this help",
+                    closeHelp: "Esc: close help",
+                    moveBlock: "Arrow keys: move block selector",
+                    activateBlock: "Enter / Space: activate focused block",
+                },
+            },
+            colorblind: {
+                enable: "Enable colorblind mode",
+                disable: "Disable colorblind mode",
+            },
+            language: {
+                label: "Language",
+                spanish: "Spanish",
+                english: "English",
+            },
+            question: {
+                title: "What is the result?",
+                placeholder: "Type your answer",
+                correct: "Correct!",
+                incorrect: "Incorrect, try again",
+                verify: "Check",
+                close: "Close",
+                retry: "Retry",
+            },
+        },
+    },
+} as const;
+
+export type AppLanguage = "es" | "en";

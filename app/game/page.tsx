@@ -6,11 +6,13 @@ import Jenga from "@/lib/Jenga";
 import QuestionModal from "@/lib/QuestionModal";
 import { useStore } from "@/store/useStore";
 import { useGameShortcuts } from "@/hooks/useGameShortcuts";
+import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { GameStatusPanel } from "@/components/game/GameStatusPanel";
 import { ShortcutHelpModal } from "@/components/game/ShortcutHelpModal";
 
 export default function GamePage() {
     const router = useRouter();
+    const { t } = useAppTranslation();
     const { lifes, isCorrect } = useStore();
     const [isRightSide, setIsRightSide] = useState(false);
 
@@ -40,7 +42,7 @@ export default function GamePage() {
                     onClose={closeShortcutModal}
                 />
                 <p className="sr-only" aria-live="polite">
-                    Usa flechas para moverte entre bloques y Enter o Espacio para activar un bloque.
+                    {t("game.screenReaderHint")}
                 </p>
                 <div className="relative w-full flex items-center justify-center">
                     <GameStatusPanel
@@ -63,13 +65,13 @@ export default function GamePage() {
                 {lifes === 0 && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
                         <div className="rounded-lg bg-white px-8 py-6 text-center text-black shadow-lg">
-                            <h2 className="text-3xl font-bold">Se derrumbó la torre, más suerte la próxima</h2>
+                            <h2 className="text-3xl font-bold">{t("game.towerCollapsed")}</h2>
                             <button
                                 type="button"
                                 onClick={handleRestart}
                                 className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
                             >
-                                Reiniciar
+                                {t("game.restart")}
                             </button>
                         </div>
                     </div>

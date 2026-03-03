@@ -2,11 +2,14 @@
 
 import { DefeatCondition } from "@/models/GameSettings";
 import { useStore } from "@/store/useStore";
+import { useAppTranslation } from "@/hooks/useAppTranslation";
+import { LanguageSelector } from "@/components/common/LanguageSelector";
 import { useCallback, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 
 export default function ConfigPage() {
     const router = useRouter();
+    const { t } = useAppTranslation();
     const { settings, setDefeatConditions, resetLifes } = useStore();
     const defaultSettingsRef = useRef<HTMLInputElement>(null);
     const oneLifeRef = useRef<HTMLInputElement>(null);
@@ -90,13 +93,17 @@ export default function ConfigPage() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black px-4">
             <main className="w-full max-w-xl rounded-lg bg-white p-6 text-black shadow-lg">
-                <h1 className="text-3xl font-bold text-center">Configuración</h1>
+                <div className="mb-4 flex justify-end">
+                    <LanguageSelector />
+                </div>
+
+                <h1 className="text-3xl font-bold text-center">{t("config.title")}</h1>
 
                 <div className="mt-6 space-y-3 text-left">
                     <div className="rounded border border-zinc-300 p-4">
-                        <div className="font-semibold">Configuración por defecto</div>
+                        <div className="font-semibold">{t("config.defaultTitle")}</div>
                         <p className="mt-1 text-sm text-zinc-700">
-                            3 vidas, sin posibilidad de perder por derrumbe en torre.
+                            {t("config.defaultDescription")}
                         </p>
                         <label className="mb-2 flex items-center gap-2">
                             <input
@@ -110,7 +117,7 @@ export default function ConfigPage() {
                                 }}
                                 onKeyDown={(event) => handleOptionArrowNavigation(event, 0)}
                             />
-                            <span>Usar configuración por defecto</span>
+                            <span>{t("config.useDefault")}</span>
                         </label>
 
                         <label className="mb-2 flex items-center gap-2">
@@ -121,7 +128,7 @@ export default function ConfigPage() {
                                 onChange={() => toggleDefeatCondition("oneLife")}
                                 onKeyDown={(event) => handleOptionArrowNavigation(event, 1)}
                             />
-                            <span>1 vida</span>
+                            <span>{t("config.oneLife")}</span>
                         </label>
                         <label className="flex items-center gap-2">
                             <input
@@ -131,7 +138,7 @@ export default function ConfigPage() {
                                 onChange={() => toggleDefeatCondition("shake")}
                                 onKeyDown={(event) => handleOptionArrowNavigation(event, 2)}
                             />
-                            <span>Posibilidad de perder</span>
+                            <span>{t("config.loseChance")}</span>
                         </label>
                     </div>
                 </div>
@@ -140,7 +147,7 @@ export default function ConfigPage() {
                     onClick={handleStart}
                     className="mt-6 w-full rounded bg-blue-600 px-4 py-3 text-white hover:bg-blue-700 transition-colors"
                 >
-                    Iniciar partida
+                    {t("config.startGame")}
                 </button>
             </main>
         </div>

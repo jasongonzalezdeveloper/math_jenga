@@ -25,6 +25,10 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+html.colorblind-mode {
+  filter: saturate(0.7) hue-rotate(-20deg) contrast(1.15);
+}
+
 @keyframes tilt-shaking {
   0% {
     transform: rotate(0deg);
