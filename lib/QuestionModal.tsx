@@ -91,24 +91,48 @@ const QuestionModal: React.FC = () => {
           <p className="text-xl font-semibold ">{question}</p>
         </div>
 
-        <input
-          ref={inputRef}
-          type="text"
-          inputMode="numeric"
-          pattern="-?[0-9]*"
-          value={userAnswer}
-          onChange={(e) => {
-            const nextValue = e.target.value.replace(/[^0-9-]/g, "");
-            const normalizedValue = nextValue
-              .replace(/(?!^)-/g, "")
-              .replace(/-{2,}/g, "-");
-            setUserAnswer(normalizedValue);
-          }}
-          placeholder={t("question.placeholder")}
-          className="w-full px-4 py-2 border border-gray-300 rounded mb-4 focus:outline-none focus:ring-2 focus:ring-blue-600"
-          onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
-          disabled={feedback !== null}
-        />
+        <div className="mb-4 flex gap-2">
+          <input
+            ref={inputRef}
+            type="text"
+            inputMode="numeric"
+            pattern="-?[0-9]*"
+            value={userAnswer}
+            onChange={(e) => {
+              const nextValue = e.target.value.replace(/[^0-9-]/g, "");
+              const normalizedValue = nextValue
+                .replace(/(?!^)-/g, "")
+                .replace(/-{2,}/g, "-");
+              setUserAnswer(normalizedValue);
+            }}
+            placeholder={t("question.placeholder")}
+            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
+            disabled={feedback !== null}
+          />
+          <button
+            type="button"
+            onClick={() => {
+              if (feedback !== null) {
+                return;
+              }
+
+              setUserAnswer((prev) => {
+                if (prev.trim() === "") {
+                  return "-";
+                }
+
+                return prev.startsWith("-") ? prev.slice(1) : `-${prev}`;
+              });
+            }}
+            disabled={feedback !== null}
+            className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            aria-label="Cambiar signo"
+            title="Cambiar signo"
+          >
+            +/-
+          </button>
+        </div>
 
         {feedback && (
           <div
