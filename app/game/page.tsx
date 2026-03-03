@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Jenga from "@/lib/Jenga";
 import QuestionModal from "@/lib/QuestionModal";
@@ -32,6 +32,16 @@ export default function GamePage() {
         onRotate: handleRotate,
         onOpenConfig: handleBackToConfig,
     });
+
+    useEffect(() => {
+        openShortcutModal();
+
+        const timerId = window.setTimeout(() => {
+            closeShortcutModal();
+        }, 2000);
+
+        return () => window.clearTimeout(timerId);
+    }, [closeShortcutModal, openShortcutModal]);
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
