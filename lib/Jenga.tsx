@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useJengaLogic } from "@/hooks/useJengaLogic";
 import { useStore } from "../store/useStore";
 
@@ -27,7 +27,10 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
   } = useJengaLogic();
 
   const topRowIndex = jengaTower.length - 1;
-  const topRow = topRowIndex >= 0 ? jengaTower[topRowIndex] : [];
+  const topRow = useMemo(
+    () => (topRowIndex >= 0 ? jengaTower[topRowIndex] : []),
+    [jengaTower, topRowIndex],
+  );
   const isPlacingCubeOnTop = Boolean(isCorrect && cubeClicked);
 
   const keyboardNavigableCubes = useMemo(() => {
@@ -98,7 +101,7 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
     topRowIndex,
   ]);
 
-  const moveKeyboardSelection = (delta: number) => {
+  const moveKeyboardSelection = useCallback((delta: number) => {
     if (keyboardNavigableCubes.length === 0) {
       return;
     }
@@ -112,9 +115,9 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
     const safeCurrentIndex = currentIndex >= 0 ? currentIndex : 0;
     const nextIndex = (safeCurrentIndex + delta + keyboardNavigableCubes.length) % keyboardNavigableCubes.length;
     setHoveredCubeId(keyboardNavigableCubes[nextIndex].id);
-  };
+  }, [hoveredCubeId, keyboardNavigableCubes, setHoveredCubeId]);
 
-  const activateKeyboardSelectedCube = () => {
+  const activateKeyboardSelectedCube = useCallback(() => {
     if (hoveredCubeId === null) {
       return;
     }
@@ -125,9 +128,9 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
     }
 
     handleClick(selected.cube);
-  };
+  }, [handleClick, hoveredCubeId, keyboardNavigableCubes]);
 
-  const handleKeyboardNavigation = (key: string, preventDefault: () => void) => {
+  const handleKeyboardNavigation = useCallback((key: string, preventDefault: () => void) => {
     if (disableKeyboardControls) {
       return;
     }
@@ -150,7 +153,7 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
       preventDefault();
       activateKeyboardSelectedCube();
     }
-  };
+  }, [activateKeyboardSelectedCube, disableKeyboardControls, moveKeyboardSelection]);
 
   const handleBoardKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
     handleKeyboardNavigation(event.key, () => event.preventDefault());
@@ -195,7 +198,7 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
 
     window.addEventListener("keydown", onWindowKeyDown);
     return () => window.removeEventListener("keydown", onWindowKeyDown);
-  }, [activateKeyboardSelectedCube, disableKeyboardControls, keyboardNavigableCubes.length, hoveredCubeId]);
+  }, [disableKeyboardControls, handleKeyboardNavigation]);
 
   return (
     <div

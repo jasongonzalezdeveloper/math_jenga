@@ -10,7 +10,7 @@ An interactive educational game that combines the classic Jenga tower with mathe
 
 ## 🎯 Overview
 
-Math Jenga is an engaging web-based learning game that helps children practice arithmetic operations (addition and subtraction) in a playful environment. Players select cubes from the tower, solve math problems, and strategically place them back on top, all while trying to keep the tower stable.
+Math Jenga is an engaging web-based learning game that helps children practice arithmetic operations (addition and subtraction) in a playful environment. Players select cubes from the tower, solve math problems, and place them on top while trying to keep the tower stable.
 
 ## 📸 Screenshots
 
@@ -30,12 +30,16 @@ Math Jenga is an engaging web-based learning game that helps children practice a
 
 ## ✨ Features
 
-- 🎲 **Interactive Jenga Tower** - Click on numbered cubes to select them
-- 🧮 **Dynamic Math Questions** - Randomly generated addition and subtraction problems
-- 💯 **Answer Validation** - Immediate feedback on correct/incorrect answers
-- ❤️ **Lives System** - Three lives to encourage careful thinking
-- 🔄 **Tower Rotation** - View the tower from different angles
-- 🎨 **Colorful Design** - Engaging visual experience with color-coded cubes
+- 🎲 **Interactive Jenga Tower** - Remove a block, solve the question, and place it on top
+- 🧮 **Dynamic Math Questions** - Randomly generated addition/subtraction problems
+- 🧱 **Logical Stability Rules** - Collapse is evaluated by row support logic (except the top row)
+- 🌪️ **Optional Collapse Chance** - Additional random collapse can be enabled via configuration (`shake`)
+- 🚫 **Protected Top Rows** - The top 3 rows cannot be removed directly
+- ❤️ **Lives System** - Supports default 3 lives or single-life mode
+- 🔄 **Tower Rotation** - Rotate tower orientation during gameplay
+- 🌐 **Internationalization (ES/EN)** - Live language switch with flag selector
+- ♿ **Accessibility Support** - Keyboard navigation, ARIA labels, focus-visible styles
+- 👁️ **Colorblind Mode** - Global visual mode toggle persisted in localStorage
 - 📱 **Responsive Layout** - Works on desktop and mobile devices
 
 ## 🚀 Getting Started
@@ -75,12 +79,35 @@ pnpm dev
 
 ## 🎮 How to Play
 
-1. **Select a Cube** - Click on any numbered cube from the visible side of the tower
-2. **Solve the Math Problem** - A modal will appear with an arithmetic problem
-3. **Enter Your Answer** - Type the correct answer and submit
-4. **Place the Cube** - If correct, place the cube on top of the tower in an empty white space
-5. **Continue Playing** - Keep solving problems and building the tower higher!
-6. **Watch Your Lives** - You have 3 lives. Incorrect answers will cost you a life
+1. **Select a Block** - Choose a removable block from the visible side
+2. **Solve the Math Problem** - The question modal appears for the selected block
+3. **Submit Your Answer** - Correct answers unlock placement on the top row
+4. **Place on Top** - Select one of the empty top blocks to complete the move
+5. **Manage Risk** - Depending on row support and settings, the tower may collapse
+6. **Keep Playing** - Continue until lives reach zero
+
+## ⌨️ Keyboard & Accessibility
+
+### In Game
+
+- `R` → Rotate tower
+- `C` → Open configuration
+- `I` → Open/close shortcuts help modal
+- `Esc` → Close shortcuts/help modal (and close question modal)
+- `Arrow keys` → Move selected block
+- `Enter` / `Space` → Activate selected block
+
+### In Configuration
+
+- `Arrow keys` move between option controls (Default, One Life, Collapse Chance)
+- `Enter` starts the game
+
+### Accessibility Notes
+
+- Question modal supports `Esc` to close
+- Focus starts on the first configuration option
+- Labels/roles are added for interactive controls
+- Colorblind mode toggle is available beside the info icon
 
 ## 🛠️ Tech Stack
 
@@ -89,27 +116,41 @@ pnpm dev
 - **UI Library:** [React 19](https://reactjs.org/) - Component-based UI
 - **Styling:** [Tailwind CSS 4](https://tailwindcss.com/) - Utility-first CSS
 - **State Management:** [Zustand](https://github.com/pmndrs/zustand) - Lightweight state management
+- **Internationalization:** [i18next](https://www.i18next.com/) + [react-i18next](https://react.i18next.com/)
+- **Icons:** [react-icons](https://react-icons.github.io/react-icons/)
+- **Flags:** [react-country-flag](https://www.npmjs.com/package/react-country-flag)
 - **Package Manager:** npm/yarn/pnpm
 
 ## 📁 Project Structure
 
 ```
 math_jenga/
-├── app/                    # Next.js app directory
-│   ├── globals.css        # Global styles
-│   ├── layout.tsx         # Root layout component
-│   └── page.tsx           # Home page
-├── components/            # Reusable React components
-├── hooks/                 # Custom React hooks
-├── lib/                   # Core game logic
-│   ├── Jenga.tsx         # Main Jenga tower component
-│   └── QuestionModal.tsx # Math question modal
-├── models/                # TypeScript models/types
-│   └── Cube.ts           # Cube model definition
-├── public/                # Static assets
-├── store/                 # State management
-│   └── useStore.ts       # Zustand store configuration
-└── styles/                # Additional styles
+├── app/
+│   ├── config/page.tsx             # Configuration screen
+│   ├── game/page.tsx               # Game screen (page skeleton)
+│   ├── globals.css                 # Global styles + colorblind filter
+│   ├── layout.tsx                  # Root layout
+│   └── page.tsx                    # Redirect to /config
+├── components/
+│   ├── common/LanguageSelector.tsx # Reusable ES/EN selector with flags
+│   └── game/
+│       ├── GameStatusPanel.tsx     # Lives + rotate + settings panel
+│       └── ShortcutHelpModal.tsx   # Info modal + top-right controls
+├── hooks/
+│   ├── useAppTranslation.ts        # i18n hook facade
+│   ├── useColorblindMode.ts        # Colorblind mode state/persistence
+│   ├── useGameShortcuts.ts         # Global game shortcuts
+│   └── useJengaLogic.ts            # Tower/gameplay logic
+├── i18n/
+│   ├── client.ts                   # i18n client setup
+│   └── resources.ts                # ES/EN translation resources
+├── lib/
+│   ├── Jenga.tsx                   # Tower rendering + keyboard behavior
+│   └── QuestionModal.tsx           # Math challenge modal
+├── models/
+├── public/
+├── store/useStore.ts               # Zustand store
+└── styles/
 ```
 
 ## 🔮 Roadmap & Future Features
@@ -118,9 +159,7 @@ math_jenga/
 
 - [ ] **Multiplayer Mode** - Two-player competitive gameplay
 - [ ] **Enhanced Animations** - Smooth cube movements and transitions
-- [ ] **Tower Physics** - Realistic tower collapse mechanics
 - [ ] **Difficulty Levels** - Easy, Medium, Hard (with multiplication/division)
-- [ ] **Bilingual Support** - English and Spanish language options
 - [ ] **Sound Effects** - Audio feedback for actions
 - [ ] **Score Tracking** - High scores and progress statistics
 - [ ] **Achievement System** - Unlock badges and rewards

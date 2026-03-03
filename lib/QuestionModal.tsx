@@ -7,15 +7,14 @@ const QuestionModal: React.FC = () => {
   const { t } = useAppTranslation();
   const { cubeClicked, decrease, setIsCorrect, clearCube } = useStore();
   const { question, answer } = cubeClicked || {};
+  const isOpen = Boolean(cubeClicked);
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const closeForPlacement = useCallback(() => {
     setUserAnswer("");
     setFeedback(null);
-    setIsOpen(false);
   }, []);
 
   const handleClose = useCallback(() => {
@@ -38,14 +37,6 @@ const QuestionModal: React.FC = () => {
       setIsCorrect(false);
     }
   }, [userAnswer, answer, setIsCorrect, decrease, closeForPlacement]);
-
-  useEffect(() => {
-    if (cubeClicked) {
-      setIsOpen(true);
-    } else {
-      setIsOpen(false);
-    }
-  }, [cubeClicked]);
 
   useEffect(() => {
     if (isOpen && inputRef.current) {

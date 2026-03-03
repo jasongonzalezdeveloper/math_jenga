@@ -14,11 +14,61 @@ const COLORS: Record<number, string> = {
 const FORCE_COLLAPSE_ON_REMOVE = false;
 const PROTECTED_TOP_ROWS = 3;
 
+const createCubeQuestion = () => {
+    const firstNumRandom = Math.floor(Math.random() * 10) + 1;
+    let question: string = firstNumRandom.toString();
+    let answer: number = firstNumRandom;
+
+    const operationQuantity = Math.floor(Math.random() * 2) + 1;
+
+    for (let index = 0; index < operationQuantity; index++) {
+        const opRandom = Math.floor(Math.random() * 2) + 1;
+        const numRandom = Math.floor(Math.random() * 10) + 1;
+
+        if (opRandom === 1) {
+            question += " + " + numRandom;
+            answer += numRandom;
+        }
+
+        if (opRandom === 2) {
+            question += " - " + numRandom;
+            answer -= numRandom;
+        }
+    }
+
+    return {
+        question,
+        answer,
+    };
+};
+
+const createInitialTower = () => {
+    const tower: Cube[][] = Array.from({ length: 18 }, (_, row) =>
+        Array.from({ length: 3 }, (_, col) => {
+            const id = row * 3 + col + 1;
+            const color = COLORS[Math.floor(Math.random() * 6) + 1];
+            const cubeQuestion = createCubeQuestion();
+
+            return {
+                id,
+                color,
+                row,
+                col,
+                shake: Math.floor(Math.random() * 81) + 20,
+                question: cubeQuestion.question,
+                answer: cubeQuestion.answer,
+            };
+        }),
+    );
+
+    return tower;
+};
+
 export const useJengaLogic = () => {
     const { cubeClicked, setCubeClicked, isCorrect, setIsCorrect, loseGame, settings } = useStore();
     const isShakeEnabled = settings.defeatConditions.includes("shake");
 
-    const [jengaTower, setJengaTower] = useState<Cube[][]>([]);
+    const [jengaTower, setJengaTower] = useState<Cube[][]>(createInitialTower);
     const [hoveredCubeId, setHoveredCubeId] = useState<number | null>(null);
     const [movedToTopCount, setMovedToTopCount] = useState(0);
 
@@ -27,61 +77,6 @@ export const useJengaLogic = () => {
         const protectedFromRow = Math.max(0, topRowIndex - (PROTECTED_TOP_ROWS - 1));
         return rowIndex >= protectedFromRow;
     }, []);
-
-    const setCubeQuestion = useCallback(() => {
-        const firstNumRandom = Math.floor(Math.random() * 10) + 1;
-        let question: string = firstNumRandom.toString();
-        let answer: number = firstNumRandom;
-
-        const operationQuantity = Math.floor(Math.random() * 2) + 1;
-
-        for (let i = 0; i < operationQuantity; i++) {
-            const opRandom = Math.floor(Math.random() * 2) + 1;
-            const numRandom = Math.floor(Math.random() * 10) + 1;
-
-            if (opRandom === 1) {
-                question += " + " + numRandom;
-                answer += numRandom;
-            }
-
-            if (opRandom === 2) {
-                question += " - " + numRandom;
-                answer -= numRandom;
-            }
-        }
-
-        return {
-            question,
-            answer,
-        };
-    }, []);
-
-    const initializeJenga = useCallback(() => {
-        const tower: Cube[][] = Array.from({ length: 18 }, (_, row) =>
-            Array.from({ length: 3 }, (_, col) => {
-                const id = row * 3 + col + 1;
-                const color = COLORS[Math.floor(Math.random() * 6) + 1];
-                const cubeQuestion = setCubeQuestion();
-
-                return {
-                    id,
-                    color,
-                    row,
-                    col,
-                    shake: Math.floor(Math.random() * 81) + 20,
-                    question: cubeQuestion.question,
-                    answer: cubeQuestion.answer,
-                };
-            }),
-        );
-
-        setJengaTower(tower);
-        setMovedToTopCount(0);
-    }, [setCubeQuestion]);
-
-    useEffect(() => {
-        initializeJenga();
-    }, [initializeJenga]);
 
     const shouldCollapseBySupportLogic = useCallback((row: Cube[], rowIndex: number, topRowIndex: number) => {
         if (rowIndex === topRowIndex) {
@@ -232,8 +227,14 @@ export const useJengaLogic = () => {
                 };
             });
 
-            setJengaTower((prev) => [...prev, tower]);
+            const animationFrameId = window.requestAnimationFrame(() => {
+                setJengaTower((prev) => [...prev, tower]);
+            });
+
+            return () => window.cancelAnimationFrame(animationFrameId);
         }
+
+        return undefined;
     }, [isCorrect, jengaTower, needJengaTowerEmptyCubes]);
 
     const getSideRowColor = useCallback((row: Cube[]) => {
