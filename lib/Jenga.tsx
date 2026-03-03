@@ -15,16 +15,18 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
   const [isKeyboardNavigationActive, setIsKeyboardNavigationActive] = useState(false);
 
   const {
-    hoveredCubeId,
+    hoveredCubeKey,
     jengaTower,
     movedToTopCount,
-    setHoveredCubeId,
+    setHoveredCubeKey,
     handleClick,
     getSideRowColor,
     getShakeAngle,
     getShakeDuration,
     getShakeMetrics,
   } = useJengaLogic();
+
+  const getCubeHoverKey = useCallback((row: number, col: number) => `${row}-${col}`, []);
 
   const topRowIndex = jengaTower.length - 1;
   const topRow = useMemo(
@@ -45,7 +47,7 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
       return topRow
         .filter((cube) => cube.isEmpty)
         .map((cube) => ({
-          id: cube.id,
+          key: getCubeHoverKey(cube.row, cube.col),
           cube,
         }));
     }
@@ -64,11 +66,11 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
         return row
           .filter((cube) => !cube.isEmpty && !(isProtectedTopRow && !cube.isEmpty))
           .map((cube) => ({
-            id: cube.id,
+            key: getCubeHoverKey(cube.row, cube.col),
             cube,
           }));
       });
-  }, [isPlacingCubeOnTop, isRightSide, jengaTower, topRow, topRowIndex]);
+  }, [getCubeHoverKey, isPlacingCubeOnTop, isRightSide, jengaTower, topRow, topRowIndex]);
 
   useEffect(() => {
     if (!isPlacingCubeOnTop || topRow.length === 0) {
@@ -88,15 +90,16 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
     if (isKeyboardNavigationActive) {
       const firstEmptyTopCube = topRow.find((cube) => cube.isEmpty);
       if (firstEmptyTopCube) {
-        setHoveredCubeId(firstEmptyTopCube.id);
+        setHoveredCubeKey(getCubeHoverKey(firstEmptyTopCube.row, firstEmptyTopCube.col));
       }
     }
   }, [
+    getCubeHoverKey,
     isKeyboardNavigationActive,
     isPlacingCubeOnTop,
     isRightSide,
     onAutoRotateToSide,
-    setHoveredCubeId,
+    setHoveredCubeKey,
     topRow,
     topRowIndex,
   ]);
@@ -106,29 +109,29 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
       return;
     }
 
-    if (hoveredCubeId === null) {
-      setHoveredCubeId(keyboardNavigableCubes[0].id);
+    if (hoveredCubeKey === null) {
+      setHoveredCubeKey(keyboardNavigableCubes[0].key);
       return;
     }
 
-    const currentIndex = keyboardNavigableCubes.findIndex((item) => item.id === hoveredCubeId);
+    const currentIndex = keyboardNavigableCubes.findIndex((item) => item.key === hoveredCubeKey);
     const safeCurrentIndex = currentIndex >= 0 ? currentIndex : 0;
     const nextIndex = (safeCurrentIndex + delta + keyboardNavigableCubes.length) % keyboardNavigableCubes.length;
-    setHoveredCubeId(keyboardNavigableCubes[nextIndex].id);
-  }, [hoveredCubeId, keyboardNavigableCubes, setHoveredCubeId]);
+    setHoveredCubeKey(keyboardNavigableCubes[nextIndex].key);
+  }, [hoveredCubeKey, keyboardNavigableCubes, setHoveredCubeKey]);
 
   const activateKeyboardSelectedCube = useCallback(() => {
-    if (hoveredCubeId === null) {
+    if (hoveredCubeKey === null) {
       return;
     }
 
-    const selected = keyboardNavigableCubes.find((item) => item.id === hoveredCubeId);
+    const selected = keyboardNavigableCubes.find((item) => item.key === hoveredCubeKey);
     if (!selected) {
       return;
     }
 
     handleClick(selected.cube);
-  }, [handleClick, hoveredCubeId, keyboardNavigableCubes]);
+  }, [handleClick, hoveredCubeKey, keyboardNavigableCubes]);
 
   const handleKeyboardNavigation = useCallback((key: string, preventDefault: () => void) => {
     if (disableKeyboardControls) {
@@ -208,8 +211,8 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
       tabIndex={0}
       aria-label="Tablero de bloques Jenga. Usa flechas para moverte entre bloques y Enter o Espacio para activar."
       onFocus={() => {
-        if (hoveredCubeId === null && keyboardNavigableCubes.length > 0) {
-          setHoveredCubeId(keyboardNavigableCubes[0].id);
+        if (hoveredCubeKey === null && keyboardNavigableCubes.length > 0) {
+          setHoveredCubeKey(keyboardNavigableCubes[0].key);
         }
       }}
       onKeyDown={handleBoardKeyDown}
@@ -248,8 +251,9 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
                       jengaTower.length - 1,
                     );
                     const cubeShake = Math.min(320, Math.max(0, dynamicShake));
-                    const isHoveredNonEmptyCube = hoveredCubeId === cube.id && !cube.isEmpty;
-                    const isHoveredHighlightCube = hoveredCubeId === cube.id && (!cube.isEmpty || isTopEmptyCube);
+                    const cubeHoverKey = getCubeHoverKey(cube.row, cube.col);
+                    const isHoveredNonEmptyCube = hoveredCubeKey === cubeHoverKey && !cube.isEmpty;
+                    const isHoveredHighlightCube = hoveredCubeKey === cubeHoverKey && (!cube.isEmpty || isTopEmptyCube);
                     const cubeStyle: React.CSSProperties & {
                       [key: string]: string | number;
                     } = {
@@ -263,12 +267,12 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
 
                     return (
                       <div
-                        key={cube.id}
+                        key={cubeHoverKey}
                         data-protected-row={isProtectedTopRow ? "true" : "false"}
                         role={orientationHorizontal ? "button" : undefined}
                         tabIndex={-1}
                         aria-disabled={isCubeSelectionBlocked}
-                        aria-label={`Bloque ${cube.id}, fila ${actualRowIndex + 1}, columna ${cube.col + 1}${cube.isEmpty ? ", espacio vacío" : ""}${isCubeSelectionBlocked ? ", no seleccionable" : ""}${isShakeEnabled && isHighRisk ? ", riesgo alto" : ""}`}
+                        aria-label={`${cube.isEmpty ? "Espacio vacío" : `Bloque ${cube.id}`}, fila ${actualRowIndex + 1}, columna ${cube.col + 1}${isCubeSelectionBlocked ? ", no seleccionable" : ""}${isShakeEnabled && isHighRisk ? ", riesgo alto" : ""}`}
                         className={`${orientationHorizontal
                           ? `relative flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none h-10 w-15 ${isCubeSelectionBlocked ? "cursor-not-allowed" : "cursor-pointer"} ${isHoveredHighlightCube ? "ring-2 ring-blue-600 ring-offset-2" : ""} ${isShakeEnabled && isHoveredNonEmptyCube && isHighRisk ? "animate-pulse ring-2 ring-red-600" : ""}`
                           : "hidden"
@@ -277,11 +281,11 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
                         onClick={() => handleClick(cube)}
                         onMouseEnter={() => {
                           setIsKeyboardNavigationActive(false);
-                          setHoveredCubeId(cube.id);
+                          setHoveredCubeKey(cubeHoverKey);
                         }}
-                        onMouseLeave={() => setHoveredCubeId(null)}
+                        onMouseLeave={() => setHoveredCubeKey(null)}
                       >
-                        <span className="text-sm font-medium">{cube.id}</span>
+                        {!cube.isEmpty && <span className="text-sm font-medium">{cube.id}</span>}
                         {isShakeEnabled && isHoveredNonEmptyCube && isHighRisk && (
                           <span className="absolute -top-2 -right-2 rounded bg-red-600 px-1 text-[10px] font-bold text-white">
                             !

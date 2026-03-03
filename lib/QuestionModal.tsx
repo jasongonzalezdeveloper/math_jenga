@@ -7,21 +7,30 @@ const QuestionModal: React.FC = () => {
   const { t } = useAppTranslation();
   const { cubeClicked, decrease, setIsCorrect, clearCube } = useStore();
   const { question, answer } = cubeClicked || {};
-  const isOpen = Boolean(cubeClicked);
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [dismissedCubeKey, setDismissedCubeKey] = useState<string | null>(null);
+  const currentCubeKey = cubeClicked
+    ? `${cubeClicked.id}-${cubeClicked.row}-${cubeClicked.col}`
+    : null;
+  const isDismissedForPlacement =
+    currentCubeKey !== null && dismissedCubeKey === currentCubeKey;
+  const isOpen = Boolean(cubeClicked) && !isDismissedForPlacement;
 
   const closeForPlacement = useCallback(() => {
     setUserAnswer("");
     setFeedback(null);
-  }, []);
+    setDismissedCubeKey(currentCubeKey ?? null);
+  }, [currentCubeKey]);
 
   const handleClose = useCallback(() => {
     setIsCorrect(false);
     clearCube();
-    closeForPlacement();
-  }, [clearCube, closeForPlacement, setIsCorrect]);
+    setUserAnswer("");
+    setFeedback(null);
+    setDismissedCubeKey(null);
+  }, [clearCube, setIsCorrect]);
 
   const handleSubmit = useCallback(() => {
     const userNum = parseInt(userAnswer, 10);

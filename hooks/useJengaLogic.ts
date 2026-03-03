@@ -69,7 +69,7 @@ export const useJengaLogic = () => {
     const isShakeEnabled = settings.defeatConditions.includes("shake");
 
     const [jengaTower, setJengaTower] = useState<Cube[][]>(createInitialTower);
-    const [hoveredCubeId, setHoveredCubeId] = useState<number | null>(null);
+    const [hoveredCubeKey, setHoveredCubeKey] = useState<string | null>(null);
     const [movedToTopCount, setMovedToTopCount] = useState(0);
 
     const isProtectedTopRow = useCallback((rowIndex: number, towerHeight: number) => {
@@ -185,7 +185,7 @@ export const useJengaLogic = () => {
         }
 
         setCubeClicked(null);
-        setHoveredCubeId(null);
+        setHoveredCubeKey(null);
         setIsCorrect(false);
     }, [
         cubeClicked,
@@ -294,10 +294,10 @@ export const useJengaLogic = () => {
     }, []);
 
     return {
-        hoveredCubeId,
+        hoveredCubeKey,
         jengaTower,
         movedToTopCount,
-        setHoveredCubeId,
+        setHoveredCubeKey,
         handleClick,
         getSideRowColor,
         getShakeAngle,
