@@ -12,6 +12,7 @@ const COLORS: Record<number, string> = {
 };
 
 const FORCE_COLLAPSE_ON_REMOVE = false;
+const PROTECTED_TOP_ROWS = 3;
 
 export const useJengaLogic = () => {
     const { cubeClicked, setCubeClicked, isCorrect, setIsCorrect, loseGame, settings } = useStore();
@@ -20,6 +21,12 @@ export const useJengaLogic = () => {
     const [jengaTower, setJengaTower] = useState<Cube[][]>([]);
     const [hoveredCubeId, setHoveredCubeId] = useState<number | null>(null);
     const [movedToTopCount, setMovedToTopCount] = useState(0);
+
+    const isProtectedTopRow = useCallback((rowIndex: number, towerHeight: number) => {
+        const topRowIndex = towerHeight - 1;
+        const protectedFromRow = Math.max(0, topRowIndex - (PROTECTED_TOP_ROWS - 1));
+        return rowIndex >= protectedFromRow;
+    }, []);
 
     const setCubeQuestion = useCallback(() => {
         const firstNumRandom = Math.floor(Math.random() * 10) + 1;
@@ -115,6 +122,10 @@ export const useJengaLogic = () => {
 
     const handleClick = useCallback((cube?: Cube) => {
         if (cube && !cube.isEmpty) {
+            if (jengaTower.length > 0 && isProtectedTopRow(cube.row, jengaTower.length)) {
+                return;
+            }
+
             setCubeClicked(cube);
             return;
         }
@@ -189,6 +200,7 @@ export const useJengaLogic = () => {
         loseGame,
         setCubeClicked,
         setIsCorrect,
+        isProtectedTopRow,
         isShakeEnabled,
         shouldCollapseBySupportLogic,
     ]);
