@@ -230,13 +230,6 @@ Contributions are welcome! If you'd like to improve Math Jenga:
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 👨‍💻 Author
-
-**Your Name**
-- Portfolio: [your-portfolio.com](https://your-portfolio.com)
-- GitHub: [@yourusername](https://github.com/yourusername)
-- LinkedIn: [Your Name](https://linkedin.com/in/yourprofile)
-
 ## 🙏 Acknowledgments
 
 - Inspired by the classic Jenga game
