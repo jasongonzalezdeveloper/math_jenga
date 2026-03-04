@@ -1,29 +1,21 @@
 import { useCallback, useEffect, useState } from "react";
 import { Cube } from "@/models/Cube";
 import { useStore } from "@/store/useStore";
-
-const COLORS: Record<number, string> = {
-    1: "#0070f3",
-    2: "#388e4a",
-    3: "#da3036",
-    4: "#f1a10d",
-    5: "#a1a1a1",
-    6: "#ad1966",
-};
-
-const FORCE_COLLAPSE_ON_REMOVE = false;
-const PROTECTED_TOP_ROWS = 3;
+import { JENGA_CONFIG } from "@/lib/appVariables";
 
 const createCubeQuestion = () => {
-    const firstNumRandom = Math.floor(Math.random() * 10) + 1;
+    const firstNumRandom =
+        Math.floor(Math.random() * JENGA_CONFIG.question.maxOperand) + JENGA_CONFIG.question.minOperand;
     let question: string = firstNumRandom.toString();
     let answer: number = firstNumRandom;
 
-    const operationQuantity = Math.floor(Math.random() * 2) + 1;
+    const operationQuantity =
+        Math.floor(Math.random() * JENGA_CONFIG.question.maxOperations) + JENGA_CONFIG.question.minOperations;
 
     for (let index = 0; index < operationQuantity; index++) {
         const opRandom = Math.floor(Math.random() * 2) + 1;
-        const numRandom = Math.floor(Math.random() * 10) + 1;
+        const numRandom =
+            Math.floor(Math.random() * JENGA_CONFIG.question.maxOperand) + JENGA_CONFIG.question.minOperand;
 
         if (opRandom === 1) {
             question += " + " + numRandom;
@@ -43,10 +35,13 @@ const createCubeQuestion = () => {
 };
 
 const createInitialTower = () => {
+    const availableColorIds = Object.keys(JENGA_CONFIG.colorsById).map(Number);
+
     const tower: Cube[][] = Array.from({ length: 18 }, (_, row) =>
         Array.from({ length: 3 }, (_, col) => {
             const id = row * 3 + col + 1;
-            const color = COLORS[Math.floor(Math.random() * 6) + 1];
+            const colorId = availableColorIds[Math.floor(Math.random() * availableColorIds.length)];
+            const color = JENGA_CONFIG.colorsById[colorId];
             const cubeQuestion = createCubeQuestion();
 
             return {
@@ -54,7 +49,10 @@ const createInitialTower = () => {
                 color,
                 row,
                 col,
-                shake: Math.floor(Math.random() * 81) + 20,
+                shake:
+                    Math.floor(
+                        Math.random() * (JENGA_CONFIG.shake.maxInitial - JENGA_CONFIG.shake.minInitial + 1),
+                    ) + JENGA_CONFIG.shake.minInitial,
                 question: cubeQuestion.question,
                 answer: cubeQuestion.answer,
             };
@@ -74,45 +72,52 @@ export const useJengaLogic = () => {
 
     const isProtectedTopRow = useCallback((rowIndex: number, towerHeight: number) => {
         const topRowIndex = towerHeight - 1;
-        const protectedFromRow = Math.max(0, topRowIndex - (PROTECTED_TOP_ROWS - 1));
+        const protectedFromRow = Math.max(0, topRowIndex - (JENGA_CONFIG.protectedTopRows - 1));
         return rowIndex >= protectedFromRow;
     }, []);
 
-    const shouldCollapseBySupportLogic = useCallback((row: Cube[], rowIndex: number, topRowIndex: number) => {
+    const shouldCollapseBySupportLogic = useCallback((
+        rowBeforeMove: Cube[],
+        removedCube: Cube,
+        rowIndex: number,
+        topRowIndex: number,
+    ) => {
         if (rowIndex === topRowIndex) {
             return false;
         }
 
-        const activeCols = row.filter((block) => !block.isEmpty).map((block) => block.col);
+        const activeColsBeforeMove = rowBeforeMove.filter((block) => !block.isEmpty).map((block) => block.col);
+        const isCenterPresent = activeColsBeforeMove.includes(1);
+        const isRemovingCenter = removedCube.col === 1;
 
-        if (activeCols.length === 0) {
-            return true;
+        if (isRemovingCenter) {
+            const hasBothSides = activeColsBeforeMove.includes(0) && activeColsBeforeMove.includes(2);
+            return !hasBothSides;
         }
 
-        if (activeCols.length === 1) {
-            return activeCols[0] !== 1;
-        }
-
-        return false;
+        return !isCenterPresent;
     }, []);
 
-    const getRemovalCollapseChanceOutOf1000 = useCallback((row: Cube[], rowIndex: number, topRowIndex: number) => {
+    const getRemovalCollapseChanceOutOf1000 = useCallback((
+        rowBeforeMove: Cube[],
+        removedCube: Cube,
+        rowIndex: number,
+        topRowIndex: number,
+    ) => {
         if (rowIndex === topRowIndex) {
             return 0;
         }
 
-        const activeCols = row.filter((block) => !block.isEmpty).map((block) => block.col);
+        const activeColsBeforeMove = rowBeforeMove.filter((block) => !block.isEmpty).map((block) => block.col);
+        const isCenterPresent = activeColsBeforeMove.includes(1);
+        const isRemovingCenter = removedCube.col === 1;
 
-        if (activeCols.length <= 1) {
-            return 1000;
+        if (isRemovingCenter) {
+            const hasBothSides = activeColsBeforeMove.includes(0) && activeColsBeforeMove.includes(2);
+            return hasBothSides ? 140 : JENGA_CONFIG.collapse.baseScale;
         }
 
-        if (activeCols.length === 2) {
-            const hasCenter = activeCols.includes(1);
-            return hasCenter ? 140 : 260;
-        }
-
-        return 60;
+        return isCenterPresent ? 140 : JENGA_CONFIG.collapse.baseScale;
     }, []);
 
     const handleClick = useCallback((cube?: Cube) => {
@@ -121,6 +126,7 @@ export const useJengaLogic = () => {
                 return;
             }
 
+            setHoveredCubeKey(`${cube.row}-${cube.col}`);
             setCubeClicked(cube);
             return;
         }
@@ -130,6 +136,23 @@ export const useJengaLogic = () => {
         }
 
         const sourceRow = cubeClicked.row;
+        const sourceRowBeforeMove = jengaTower[sourceRow] ?? [];
+        const topRowIndex = jengaTower.length - 1;
+
+        const shouldCollapseByLogic = shouldCollapseBySupportLogic(
+            sourceRowBeforeMove,
+            cubeClicked,
+            sourceRow,
+            topRowIndex,
+        );
+
+        const collapseChanceOutOf1000 = getRemovalCollapseChanceOutOf1000(
+            sourceRowBeforeMove,
+            cubeClicked,
+            sourceRow,
+            topRowIndex,
+        );
+
         const newTower = jengaTower.map((row) =>
             row.map((currentCube) => {
                 if (currentCube.row === cube.row && currentCube.col === cube.col) {
@@ -157,27 +180,14 @@ export const useJengaLogic = () => {
         setJengaTower(newTower);
         setMovedToTopCount((prev) => prev + 1);
 
-        const topRowIndex = newTower.length - 1;
-        const sourceRowAfterMove = newTower[sourceRow] ?? [];
-
-        const shouldCollapseByLogic = shouldCollapseBySupportLogic(
-            sourceRowAfterMove,
-            sourceRow,
-            topRowIndex,
-        );
-
         if (shouldCollapseByLogic) {
             loseGame();
         } else if (isShakeEnabled) {
-            const collapseChanceOutOf1000 = FORCE_COLLAPSE_ON_REMOVE
-                ? 1000
-                : getRemovalCollapseChanceOutOf1000(
-                    sourceRowAfterMove,
-                    sourceRow,
-                    topRowIndex,
-                );
-            const collapseRoll = Math.floor(Math.random() * 1000) + 1;
-            const didTowerCollapseByRemoval = collapseRoll <= collapseChanceOutOf1000;
+            const collapseChanceOutOf1000ToApply = JENGA_CONFIG.forceCollapseOnRemove
+                ? JENGA_CONFIG.collapse.baseScale
+                : collapseChanceOutOf1000;
+            const collapseRoll = Math.floor(Math.random() * JENGA_CONFIG.collapse.baseScale) + 1;
+            const didTowerCollapseByRemoval = collapseRoll <= collapseChanceOutOf1000ToApply;
 
             if (didTowerCollapseByRemoval) {
                 loseGame();
@@ -194,6 +204,7 @@ export const useJengaLogic = () => {
         jengaTower,
         loseGame,
         setCubeClicked,
+        setHoveredCubeKey,
         setIsCorrect,
         isProtectedTopRow,
         isShakeEnabled,
@@ -243,15 +254,17 @@ export const useJengaLogic = () => {
     }, []);
 
     const getShakeAngle = useCallback((shake: number) => {
-        const normalizedShake = Math.min(320, Math.max(0, shake));
-        const maxAngle = 2 + (normalizedShake / 320) * 24;
+        const normalizedShake = Math.min(JENGA_CONFIG.shake.maxDynamic, Math.max(0, shake));
+        const maxAngle =
+            JENGA_CONFIG.shake.maxAngleBase +
+            (normalizedShake / JENGA_CONFIG.shake.maxDynamic) * JENGA_CONFIG.shake.maxAngleExtra;
         return `${maxAngle}deg`;
     }, []);
 
     const getShakeDuration = useCallback((shake: number) => {
-        const normalizedShake = Math.min(320, Math.max(0, shake));
-        const durationMs = 560 - normalizedShake * 1.8;
-        return `${Math.max(80, durationMs)}ms`;
+        const normalizedShake = Math.min(JENGA_CONFIG.shake.maxDynamic, Math.max(0, shake));
+        const durationMs = JENGA_CONFIG.shake.maxDurationMs - normalizedShake * JENGA_CONFIG.shake.durationFactor;
+        return `${Math.max(JENGA_CONFIG.shake.minDurationMs, durationMs)}ms`;
     }, []);
 
     const getShakeMetrics = useCallback((cube: Cube, row: Cube[], topMoved: number, rowIndex: number, topRowIndex: number) => {
@@ -269,8 +282,8 @@ export const useJengaLogic = () => {
 
         if (isLastCubeInRow) {
             return {
-                dynamicShake: 320,
-                collapseChanceOutOf1000: 1000,
+                dynamicShake: JENGA_CONFIG.shake.maxDynamic,
+                collapseChanceOutOf1000: JENGA_CONFIG.collapse.baseScale,
                 isHighRisk: true,
             };
         }
@@ -282,7 +295,7 @@ export const useJengaLogic = () => {
         const rowBoost = missingBlocks * 70;
         const topBoost = Math.min(220, topMoved * 4);
 
-        const dynamicShake = Math.min(320, baseIntensity + rowBoost + topBoost);
+        const dynamicShake = Math.min(JENGA_CONFIG.shake.maxDynamic, baseIntensity + rowBoost + topBoost);
         const collapseChanceOutOf1000 = Math.min(900, Math.round(dynamicShake * 2.6));
         const isHighRisk = collapseChanceOutOf1000 >= 700;
 

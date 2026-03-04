@@ -35,13 +35,7 @@ export default function GamePage() {
 
     useEffect(() => {
         openShortcutModal();
-
-        const timerId = window.setTimeout(() => {
-            closeShortcutModal();
-        }, 2000);
-
-        return () => window.clearTimeout(timerId);
-    }, [closeShortcutModal, openShortcutModal]);
+    }, [openShortcutModal]);
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
@@ -57,13 +51,12 @@ export default function GamePage() {
                 <div className="relative w-full flex items-center justify-center">
                     <GameStatusPanel
                         lifes={lifes}
-                        isCorrect={isCorrect}
                         isRightSide={isRightSide}
                         onRotate={handleRotate}
                         onOpenConfig={handleBackToConfig}
                     />
 
-                    <div className={`w-full flex justify-center ${isCorrect ? "pt-96" : "pt-80"} lg:pt-0`}>
+                    <div className="w-full flex justify-center pt-20 lg:pt-0">
                         <Jenga
                             isRightSide={isRightSide}
                             onAutoRotateToSide={setIsRightSide}

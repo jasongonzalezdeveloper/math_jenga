@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useJengaLogic } from "@/hooks/useJengaLogic";
 import { useStore } from "@/store/useStore";
+import { APP_DEBUG } from "@/lib/appVariables";
 
 interface JengaProps {
   isRightSide: boolean;
@@ -34,6 +35,39 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
     [jengaTower, topRowIndex],
   );
   const isPlacingCubeOnTop = Boolean(isCorrect && cubeClicked);
+
+  const hoveredCube = useMemo(() => {
+    if (!hoveredCubeKey) {
+      return null;
+    }
+
+    for (const row of jengaTower) {
+      for (const cube of row) {
+        if (`${cube.row}-${cube.col}` === hoveredCubeKey) {
+          return cube;
+        }
+      }
+    }
+
+    return null;
+  }, [hoveredCubeKey, jengaTower]);
+
+  const collapseChanceDebug = useMemo(() => {
+    if (!isShakeEnabled || !hoveredCube || hoveredCube.isEmpty || jengaTower.length === 0) {
+      return 0;
+    }
+
+    const row = jengaTower[hoveredCube.row] ?? [];
+    const metrics = getShakeMetrics(
+      hoveredCube,
+      row,
+      movedToTopCount,
+      hoveredCube.row,
+      jengaTower.length - 1,
+    );
+
+    return metrics.collapseChanceOutOf1000;
+  }, [getShakeMetrics, hoveredCube, isShakeEnabled, jengaTower, movedToTopCount]);
 
   const keyboardNavigableCubes = useMemo(() => {
     if (isPlacingCubeOnTop && topRow.length > 0) {
@@ -217,6 +251,12 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
       }}
       onKeyDown={handleBoardKeyDown}
     >
+      {APP_DEBUG.showCollapseChanceOverlay && (
+        <div className="fixed left-2 top-2 z-50 rounded bg-black/75 px-2 py-1 text-xs font-semibold text-white">
+          {APP_DEBUG.collapseChanceLabel}: {collapseChanceDebug}
+        </div>
+      )}
+
       <div className="transform-gpu transition-transform duration-500">
         {jengaTower.length > 0 &&
           jengaTower

@@ -16,10 +16,6 @@ export const useGameShortcuts = ({ onRotate, onOpenConfig }: UseGameShortcutsPar
         setIsShortcutModalOpen(false);
     }, []);
 
-    const toggleShortcutModal = useCallback(() => {
-        setIsShortcutModalOpen((prev) => !prev);
-    }, []);
-
     useEffect(() => {
         const onGlobalKeyDown = (event: KeyboardEvent) => {
             const target = event.target as HTMLElement | null;
@@ -36,15 +32,11 @@ export const useGameShortcuts = ({ onRotate, onOpenConfig }: UseGameShortcutsPar
 
             const key = event.key.toLowerCase();
 
-            if (key === "escape" && isShortcutModalOpen) {
-                event.preventDefault();
-                closeShortcutModal();
-                return;
-            }
-
             if (key === "i") {
                 event.preventDefault();
-                toggleShortcutModal();
+                if (!isShortcutModalOpen) {
+                    openShortcutModal();
+                }
                 return;
             }
 
@@ -67,12 +59,11 @@ export const useGameShortcuts = ({ onRotate, onOpenConfig }: UseGameShortcutsPar
 
         window.addEventListener("keydown", onGlobalKeyDown);
         return () => window.removeEventListener("keydown", onGlobalKeyDown);
-    }, [closeShortcutModal, isShortcutModalOpen, onOpenConfig, onRotate, toggleShortcutModal]);
+    }, [isShortcutModalOpen, onOpenConfig, onRotate, openShortcutModal]);
 
     return {
         isShortcutModalOpen,
         openShortcutModal,
         closeShortcutModal,
-        toggleShortcutModal,
     };
 };

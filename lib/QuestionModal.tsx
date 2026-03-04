@@ -2,13 +2,15 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
+import { APP_MODAL, APP_VIEWPORT } from "@/lib/appVariables";
 
 const QuestionModal: React.FC = () => {
   const { t } = useAppTranslation();
-  const { cubeClicked, decrease, setIsCorrect, clearCube, lifes } = useStore();
+  const { cubeClicked, decrease, setIsCorrect, clearCube, lifes, settings } = useStore();
   const { question, answer } = cubeClicked || {};
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
+  const [isModalReady, setIsModalReady] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const [dismissedCubeKey, setDismissedCubeKey] = useState<string | null>(null);
   const currentCubeKey = cubeClicked
@@ -16,7 +18,31 @@ const QuestionModal: React.FC = () => {
     : null;
   const isDismissedForPlacement =
     currentCubeKey !== null && dismissedCubeKey === currentCubeKey;
-  const isOpen = Boolean(cubeClicked) && !isDismissedForPlacement && lifes > 0;
+  const hasBaseVisibility = Boolean(cubeClicked) && !isDismissedForPlacement && lifes > 0;
+  const isShakeEnabled = settings.defeatConditions.includes("shake");
+  const isOpen = hasBaseVisibility && isModalReady;
+
+  useEffect(() => {
+    if (!hasBaseVisibility) {
+      setIsModalReady(false);
+      return;
+    }
+
+    const isMobile = window.matchMedia(`(max-width: ${APP_VIEWPORT.mobileMaxWidthPx}px)`).matches;
+    const delayMs = isMobile && isShakeEnabled ? APP_MODAL.mobileQuestionDelayMsWithShake : 0;
+
+    if (delayMs === 0) {
+      setIsModalReady(true);
+      return;
+    }
+
+    setIsModalReady(false);
+    const timeoutId = window.setTimeout(() => {
+      setIsModalReady(true);
+    }, delayMs);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [hasBaseVisibility, isShakeEnabled, currentCubeKey]);
 
   const closeForPlacement = useCallback(() => {
     setUserAnswer("");
@@ -46,9 +72,13 @@ const QuestionModal: React.FC = () => {
     if (userNum === answer) {
       setFeedback("correct");
       setIsCorrect(true);
+      const isMobile = window.matchMedia(`(max-width: ${APP_VIEWPORT.mobileMaxWidthPx}px)`).matches;
+      if (APP_MODAL.scrollOnCorrectInMobile && isMobile) {
+        window.scrollTo({ top: 0, behavior: APP_MODAL.scrollBehaviorOnCorrect });
+      }
       setTimeout(() => {
         closeForPlacement();
-      }, 1000);
+      }, APP_MODAL.closeAfterCorrectMs);
     } else {
       decrease();
       setFeedback("incorrect");

@@ -22,9 +22,16 @@ export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({
         t("shortcuts.options.rotate"),
         t("shortcuts.options.config"),
         t("shortcuts.options.help"),
-        t("shortcuts.options.closeHelp"),
         t("shortcuts.options.moveBlock"),
         t("shortcuts.options.activateBlock"),
+    ];
+
+    const gameInstructions = [
+        t("shortcuts.instructions.move"),
+        t("shortcuts.instructions.activate"),
+        t("shortcuts.instructions.answer"),
+        t("shortcuts.instructions.sign"),
+        t("shortcuts.instructions.goal"),
     ];
 
     return (
@@ -62,19 +69,35 @@ export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({
                         aria-labelledby="shortcuts-title"
                     >
                         <h2 id="shortcuts-title" className="text-2xl font-bold">{t("shortcuts.heading")}</h2>
-                        <ul className="mt-4 space-y-2 text-sm">
-                            {shortcutOptions.map((option) => (
-                                <li key={option}>
-                                    <span>{option}</span>
-                                </li>
-                            ))}
-                        </ul>
+                        <div className="mt-4 space-y-4 text-sm">
+                            <section>
+                                <h3 className="text-base font-semibold">{t("shortcuts.instructionsHeading")}</h3>
+                                <ul className="mt-2 space-y-2">
+                                    {gameInstructions.map((instruction) => (
+                                        <li key={instruction}>
+                                            <span>{instruction}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+
+                            <section className="hidden md:block">
+                                <h3 className="text-base font-semibold">{t("shortcuts.shortcutsHeading")}</h3>
+                                <ul className="mt-2 space-y-2">
+                                    {shortcutOptions.map((option) => (
+                                        <li key={option}>
+                                            <span>{option}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </section>
+                        </div>
                         <button
                             type="button"
                             onClick={onClose}
                             className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
                         >
-                            {t("shortcuts.close")}
+                            {t("shortcuts.accept")}
                         </button>
                     </div>
                 </div>

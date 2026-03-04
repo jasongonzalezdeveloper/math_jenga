@@ -6,8 +6,8 @@ export const resources = {
                 defaultTitle: "Configuración por defecto",
                 defaultDescription: "3 vidas, sin posibilidad de perder por derrumbe en torre.",
                 useDefault: "Usar configuración por defecto",
-                oneLife: "1 vida",
-                loseChance: "Posibilidad de perder",
+                oneLife: "Muerte súbita (1 vida)",
+                loseChance: "Posibilidad de derrumbar la torre",
                 startGame: "Iniciar partida",
             },
             game: {
@@ -16,7 +16,6 @@ export const resources = {
                 restart: "Reiniciar",
             },
             statusPanel: {
-                placeOnTop: "¡DEBES COLOCAR EL CUBO EN LA CIMA DE LA TORRE, ESCOGE UNO DE LOS CUBOS BLANCOS DISPONIBLES!",
                 lifesText: "Tienes {{count}} vidas",
                 settingsAria: "Configuración",
                 settingsTitle: "Configuración (atajo C)",
@@ -29,15 +28,24 @@ export const resources = {
             shortcuts: {
                 infoAria: "Información de atajos",
                 infoTitle: "Atajos de teclado",
-                heading: "Atajos de teclado",
-                close: "Cerrar",
+                heading: "Información del juego",
+                instructionsHeading: "Cómo jugar",
+                shortcutsHeading: "Atajos de teclado",
+                accept: "Aceptar",
                 options: {
                     rotate: "R: girar la torre",
                     config: "C: abrir configuración",
-                    help: "I: abrir/cerrar esta ayuda",
+                    help: "I: abrir información",
                     closeHelp: "Esc: cerrar ayuda",
                     moveBlock: "Flechas: mover selector de bloque",
                     activateBlock: "Enter / Espacio: activar bloque enfocado",
+                },
+                instructions: {
+                    move: "Da clic en los bloques o usa las flechas para moverte entre ellos.",
+                    activate: "Si usas el teclado, presiona Enter o Espacio para activar el bloque seleccionado.",
+                    answer: "Cuando aparezca la pregunta, escribe tu respuesta en el campo de texto.",
+                    sign: "Puedes usar el botón +/- para cambiar tu respuesta a número positivo o negativo.",
+                    goal: "Si respondes bien, elige uno de los bloques blancos de la cima para colocar tu bloque.",
                 },
             },
             colorblind: {
@@ -67,8 +75,8 @@ export const resources = {
                 defaultTitle: "Default settings",
                 defaultDescription: "3 lives, no chance to lose by tower collapse.",
                 useDefault: "Use default settings",
-                oneLife: "1 life",
-                loseChance: "Chance to lose",
+                oneLife: "Sudden death",
+                loseChance: "Chance to collapse the tower",
                 startGame: "Start game",
             },
             game: {
@@ -77,7 +85,6 @@ export const resources = {
                 restart: "Restart",
             },
             statusPanel: {
-                placeOnTop: "YOU MUST PLACE THE BLOCK ON TOP OF THE TOWER, CHOOSE ONE OF THE AVAILABLE WHITE BLOCKS!",
                 lifesText: "You have {{count}} lives",
                 settingsAria: "Settings",
                 settingsTitle: "Settings (shortcut C)",
@@ -90,15 +97,24 @@ export const resources = {
             shortcuts: {
                 infoAria: "Shortcuts info",
                 infoTitle: "Keyboard shortcuts",
-                heading: "Keyboard shortcuts",
-                close: "Close",
+                heading: "Game information",
+                instructionsHeading: "How to play",
+                shortcutsHeading: "Keyboard shortcuts",
+                accept: "Accept",
                 options: {
                     rotate: "R: rotate tower",
                     config: "C: open settings",
-                    help: "I: open/close this help",
+                    help: "I: open information",
                     closeHelp: "Esc: close help",
                     moveBlock: "Arrow keys: move block selector",
                     activateBlock: "Enter / Space: activate focused block",
+                },
+                instructions: {
+                    move: "Click blocks or use arrow keys to move between them.",
+                    activate: "When using the keyboard, press Enter or Space to activate the selected block.",
+                    answer: "When the question appears, type your answer in the input field.",
+                    sign: "Use the +/- button to switch your answer between positive and negative.",
+                    goal: "After a correct answer, pick one of the white blocks on top to place your block.",
                 },
             },
             colorblind: {
