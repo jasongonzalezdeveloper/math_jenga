@@ -20,4 +20,4 @@ if (!i18n.isInitialized) {
         });
 }
 
-export { i18n, LANGUAGE_STORAGE_KEY };
+export { LANGUAGE_STORAGE_KEY };

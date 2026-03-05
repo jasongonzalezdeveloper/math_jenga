@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { useJengaLogic } from "@/hooks/useJengaLogic";
 import { useStore } from "@/store/useStore";
 import { APP_DEBUG } from "@/lib/appVariables";
+import { JengaTower } from "@/components/game/JengaTower";
 
 interface JengaProps {
   isRightSide: boolean;
@@ -258,85 +259,25 @@ const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableK
       )}
 
       <div className="transform-gpu transition-transform duration-500">
-        {jengaTower.length > 0 &&
-          jengaTower
-            .slice()
-            .reverse()
-            .map((row, revIndex) => {
-              const actualRowIndex = jengaTower.length - 1 - revIndex;
-              const protectedTopStartIndex = Math.max(0, jengaTower.length - 3);
-              const isProtectedTopRow = actualRowIndex >= protectedTopStartIndex;
-              const isEven = actualRowIndex % 2 === 0;
-              const orientationHorizontal = isRightSide ? isEven : !isEven;
-              return (
-                <div
-                  key={actualRowIndex}
-                  className={`flex items-center justify-center my-1 h-10 ${isEven ? "px-1" : ""}`}
-                  style={
-                    !orientationHorizontal
-                      ? {
-                        backgroundColor: getSideRowColor(row),
-                      }
-                      : {}
-                  }
-                >
-                  {row.map((cube) => {
-                    const isCubeSelectionBlocked = !cube.isEmpty && isProtectedTopRow;
-                    const isTopEmptyCube = cube.isEmpty && actualRowIndex === topRowIndex;
-                    const { dynamicShake, isHighRisk } = getShakeMetrics(
-                      cube,
-                      row,
-                      movedToTopCount,
-                      actualRowIndex,
-                      jengaTower.length - 1,
-                    );
-                    const cubeShake = Math.min(320, Math.max(0, dynamicShake));
-                    const cubeHoverKey = getCubeHoverKey(cube.row, cube.col);
-                    const isHoveredNonEmptyCube = hoveredCubeKey === cubeHoverKey && !cube.isEmpty;
-                    const isHoveredHighlightCube = hoveredCubeKey === cubeHoverKey && (!cube.isEmpty || isTopEmptyCube);
-                    const cubeStyle: React.CSSProperties & {
-                      [key: string]: string | number;
-                    } = {
-                      backgroundColor: cube.color,
-                    };
-
-                    if (isShakeEnabled && isHoveredNonEmptyCube && cubeShake > 0) {
-                      cubeStyle.animation = `tilt-shaking ${getShakeDuration(cubeShake)} ease-in-out infinite`;
-                      cubeStyle["--shake-angle"] = getShakeAngle(cubeShake);
-                    }
-
-                    return (
-                      <div
-                        key={cubeHoverKey}
-                        data-protected-row={isProtectedTopRow ? "true" : "false"}
-                        role={orientationHorizontal ? "button" : undefined}
-                        tabIndex={-1}
-                        aria-disabled={isCubeSelectionBlocked}
-                        aria-label={`${cube.isEmpty ? "Espacio vacío" : `Bloque ${cube.id}`}, fila ${actualRowIndex + 1}, columna ${cube.col + 1}${isCubeSelectionBlocked ? ", no seleccionable" : ""}${isShakeEnabled && isHighRisk ? ", riesgo alto" : ""}`}
-                        className={`${orientationHorizontal
-                          ? `relative flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none h-10 w-15 ${isCubeSelectionBlocked ? "cursor-not-allowed" : "cursor-pointer"} ${isHoveredHighlightCube ? "ring-2 ring-blue-600 ring-offset-2" : ""} ${isShakeEnabled && isHoveredNonEmptyCube && isHighRisk ? "animate-pulse ring-2 ring-red-600" : ""}`
-                          : "hidden"
-                          }`}
-                        style={cubeStyle}
-                        onClick={() => handleClick(cube)}
-                        onMouseEnter={() => {
-                          setIsKeyboardNavigationActive(false);
-                          setHoveredCubeKey(cubeHoverKey);
-                        }}
-                        onMouseLeave={() => setHoveredCubeKey(null)}
-                      >
-                        {!cube.isEmpty && <span className="text-sm font-medium">{cube.id}</span>}
-                        {isShakeEnabled && isHoveredNonEmptyCube && isHighRisk && (
-                          <span className="absolute -top-2 -right-2 rounded bg-red-600 px-1 text-[10px] font-bold text-white">
-                            !
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-              );
-            })}
+        <JengaTower
+          jengaTower={jengaTower}
+          isRightSide={isRightSide}
+          topRowIndex={topRowIndex}
+          movedToTopCount={movedToTopCount}
+          hoveredCubeKey={hoveredCubeKey}
+          isShakeEnabled={isShakeEnabled}
+          getCubeHoverKey={getCubeHoverKey}
+          getSideRowColor={getSideRowColor}
+          getShakeMetrics={getShakeMetrics}
+          getShakeDuration={getShakeDuration}
+          getShakeAngle={getShakeAngle}
+          onCubeHover={(cubeHoverKey) => {
+            setIsKeyboardNavigationActive(false);
+            setHoveredCubeKey(cubeHoverKey);
+          }}
+          onCubeLeave={() => setHoveredCubeKey(null)}
+          onCubeActivate={handleClick}
+        />
       </div>
     </div>
   );
