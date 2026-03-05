@@ -3,7 +3,7 @@
 import { useStore } from "@/store/useStore";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { LanguageSelector } from "@/components/common/LanguageSelector";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
 
 export default function ConfigPage() {
@@ -40,7 +40,7 @@ export default function ConfigPage() {
         optionRefs[wrapped].current?.focus();
     }, [optionRefs]);
 
-    const handleOptionArrowNavigation = useCallback((event: React.KeyboardEvent<HTMLElement>, currentIndex: number) => {
+    const handleOptionArrowNavigation = useCallback((event: ReactKeyboardEvent<HTMLElement>, currentIndex: number) => {
         if (event.key === "ArrowDown" || event.key === "ArrowRight") {
             event.preventDefault();
             focusOptionByIndex(currentIndex + 1);

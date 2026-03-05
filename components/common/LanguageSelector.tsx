@@ -15,7 +15,7 @@ const LANGUAGE_OPTIONS: Array<{ code: AppLanguage; countryCode: string; labelKey
     { code: "en", countryCode: "US", labelKey: "language.english" },
 ];
 
-export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className }) => {
+export function LanguageSelector({ className }: LanguageSelectorProps) {
     const { t, language, setLanguage } = useAppTranslation();
     const [isOpen, setIsOpen] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
@@ -94,4 +94,4 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ className })
             )}
         </div>
     );
-};
+}

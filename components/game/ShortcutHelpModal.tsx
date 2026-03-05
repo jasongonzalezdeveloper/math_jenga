@@ -1,4 +1,3 @@
-import React from "react";
 import { FiEye, FiEyeOff, FiInfo } from "react-icons/fi";
 import { useColorblindMode } from "@/hooks/useColorblindMode";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
@@ -10,11 +9,11 @@ interface ShortcutHelpModalProps {
     onClose: () => void;
 }
 
-export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({
+export function ShortcutHelpModal({
     isOpen,
     onOpen,
     onClose,
-}) => {
+}: ShortcutHelpModalProps) {
     const { isColorblindMode, toggleColorblindMode } = useColorblindMode();
     const { t } = useAppTranslation();
 
@@ -104,4 +103,4 @@ export const ShortcutHelpModal: React.FC<ShortcutHelpModalProps> = ({
             )}
         </>
     );
-};
+}

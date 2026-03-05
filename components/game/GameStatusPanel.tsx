@@ -10,12 +10,12 @@ interface GameStatusPanelProps {
     onOpenConfig: () => void;
 }
 
-export const GameStatusPanel: React.FC<GameStatusPanelProps> = ({
+export function GameStatusPanel({
     lifes,
     isRightSide,
     onRotate,
     onOpenConfig,
-}) => {
+}: GameStatusPanelProps) {
     const { t } = useAppTranslation();
 
     return (
@@ -59,4 +59,4 @@ export const GameStatusPanel: React.FC<GameStatusPanelProps> = ({
             </div>
         </div>
     );
-};
+}
