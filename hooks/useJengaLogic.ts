@@ -245,7 +245,6 @@ export const useJengaLogic = () => {
             return () => window.cancelAnimationFrame(animationFrameId);
         }
 
-        return undefined;
     }, [isCorrect, jengaTower, needJengaTowerEmptyCubes]);
 
     const getSideRowColor = useCallback((row: Cube[]) => {

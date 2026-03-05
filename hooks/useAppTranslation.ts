@@ -9,7 +9,7 @@ import type { AppLanguage } from "@/i18n/resources";
 export const useAppTranslation = () => {
     const { t, i18n } = useTranslation();
 
-    const language: AppLanguage = i18n.resolvedLanguage?.startsWith("en") ? "en" : "es";
+    const language = i18n.resolvedLanguage?.startsWith("en") ? "en" : "es";
 
     useEffect(() => {
         if (typeof window === "undefined") {
@@ -17,7 +17,7 @@ export const useAppTranslation = () => {
         }
 
         const storedLanguage = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);
-        const normalizedStoredLanguage: AppLanguage = storedLanguage?.startsWith("en") ? "en" : "es";
+        const normalizedStoredLanguage = storedLanguage?.startsWith("en") ? "en" : "es";
 
         if (normalizedStoredLanguage !== language) {
             void i18n.changeLanguage(normalizedStoredLanguage);

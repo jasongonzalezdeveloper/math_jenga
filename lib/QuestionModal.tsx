@@ -1,16 +1,62 @@
 "use client";
-import React, { useEffect, useRef, useState, useCallback } from "react";
+import { useEffect, useReducer, useRef, useState, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { APP_MODAL, APP_VIEWPORT } from "@/lib/appVariables";
 
-const QuestionModal: React.FC = () => {
+type ModalReadyState = {
+  status: "hidden" | "waiting" | "ready";
+  cubeKey: string | null;
+};
+
+type ModalReadyAction =
+  | { type: "HIDE" }
+  | { type: "WAIT"; cubeKey: string }
+  | { type: "SHOW_NOW"; cubeKey: string }
+  | { type: "READY"; cubeKey: string };
+
+const modalReadyReducer = (state: ModalReadyState, action: ModalReadyAction): ModalReadyState => {
+  if (action.type === "HIDE") {
+    return {
+      status: "hidden",
+      cubeKey: null,
+    };
+  }
+
+  if (action.type === "WAIT") {
+    return {
+      status: "waiting",
+      cubeKey: action.cubeKey,
+    };
+  }
+
+  if (action.type === "SHOW_NOW") {
+    return {
+      status: "ready",
+      cubeKey: action.cubeKey,
+    };
+  }
+
+  if (state.cubeKey !== action.cubeKey) {
+    return state;
+  }
+
+  return {
+    status: "ready",
+    cubeKey: action.cubeKey,
+  };
+};
+
+const QuestionModal = () => {
   const { t } = useAppTranslation();
   const { cubeClicked, decrease, setIsCorrect, clearCube, lifes, settings } = useStore();
   const { question, answer } = cubeClicked || {};
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
-  const [isModalReady, setIsModalReady] = useState(false);
+  const [modalReadyState, dispatchModalReady] = useReducer(modalReadyReducer, {
+    status: "hidden",
+    cubeKey: null,
+  });
   const inputRef = useRef<HTMLInputElement>(null);
   const [dismissedCubeKey, setDismissedCubeKey] = useState<string | null>(null);
   const currentCubeKey = cubeClicked
@@ -20,11 +66,13 @@ const QuestionModal: React.FC = () => {
     currentCubeKey !== null && dismissedCubeKey === currentCubeKey;
   const hasBaseVisibility = Boolean(cubeClicked) && !isDismissedForPlacement && lifes > 0;
   const isShakeEnabled = settings.defeatConditions.includes("shake");
+  const isModalReady =
+    modalReadyState.status === "ready" && modalReadyState.cubeKey === currentCubeKey;
   const isOpen = hasBaseVisibility && isModalReady;
 
   useEffect(() => {
-    if (!hasBaseVisibility) {
-      setIsModalReady(false);
+    if (!hasBaseVisibility || !currentCubeKey) {
+      dispatchModalReady({ type: "HIDE" });
       return;
     }
 
@@ -32,13 +80,13 @@ const QuestionModal: React.FC = () => {
     const delayMs = isMobile && isShakeEnabled ? APP_MODAL.mobileQuestionDelayMsWithShake : 0;
 
     if (delayMs === 0) {
-      setIsModalReady(true);
+      dispatchModalReady({ type: "SHOW_NOW", cubeKey: currentCubeKey });
       return;
     }
 
-    setIsModalReady(false);
+    dispatchModalReady({ type: "WAIT", cubeKey: currentCubeKey });
     const timeoutId = window.setTimeout(() => {
-      setIsModalReady(true);
+      dispatchModalReady({ type: "READY", cubeKey: currentCubeKey });
     }, delayMs);
 
     return () => window.clearTimeout(timeoutId);

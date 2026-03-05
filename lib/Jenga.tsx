@@ -11,7 +11,7 @@ interface JengaProps {
   disableKeyboardControls?: boolean;
 }
 
-const Jenga: React.FC<JengaProps> = ({ isRightSide, onAutoRotateToSide, disableKeyboardControls = false }) => {
+const Jenga = ({ isRightSide, onAutoRotateToSide, disableKeyboardControls = false }: JengaProps) => {
   const { settings, isCorrect, cubeClicked } = useStore();
   const isShakeEnabled = settings.defeatConditions.includes("shake");
   const [isKeyboardNavigationActive, setIsKeyboardNavigationActive] = useState(false);
