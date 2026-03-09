@@ -179,25 +179,50 @@ math_jenga/
 └── styles/
 ```
 
-## 🔮 Roadmap & Future Features
+## 🔮 Roadmap (No Timelines)
 
-### Upcoming Enhancements
-
-- [ ] **Multiplayer Mode** - Two-player competitive gameplay
-- [ ] **Enhanced Animations** - Smooth cube movements and transitions
-- [ ] **Difficulty Levels** - Easy, Medium, Hard (with multiplication/division)
-- [ ] **Sound Effects** - Audio feedback for actions
-- [ ] **Score Tracking** - High scores and progress statistics
-- [ ] **Achievement System** - Unlock badges and rewards
-- [ ] **Customizable Themes** - Different visual styles
-- [ ] **Progressive Math Topics** - Advanced operations for older students
-
-### Long-term Goals
-
-- Mobile app version (React Native)
-- Teacher dashboard for classroom use
-- Printable worksheets generation
-- Integration with educational standards (Common Core, etc.)
+- [ ] **Answer Time Limit System**
+  - Timer per operation.
+  - Example: 30s for easy operations, 15s for difficult ones.
+  - If time runs out: it counts as incorrect, and the player loses a life or turn.
+- [ ] **Correct Answer Streak System (Combo)**
+  - Bonus for consecutive correct answers.
+  - Example: 3 correct -> x1.5 points, 5 correct -> x2 points.
+- [ ] **Visual Difficulty Indicator**
+  - Block color changes based on difficulty.
+  - Example: green (easy), yellow (medium), red (hard).
+- [ ] **Dynamic Board Extension System**
+  - After a certain number of correct answers or levels, add 5-10 new rows.
+  - New rows include harder operations.
+- [ ] **Difficulty Progression System**
+  - Difficulty increases based on level, play time, or answer streak.
+  - Example: levels 1-3 (addition), 4-6 (subtraction), 7-10 (multiplication), 10+ (mixed).
+- [ ] **Scoring System**
+  - Points calculated from speed, difficulty, and combo.
+  - Example: `points = difficulty x speed x combo`.
+- [ ] **Local Multiplayer Turn System**
+  - Two players on the same screen.
+  - Alternating turns.
+  - Clear UI indicator showing whose turn it is.
+- [ ] **Per-Player Lives System**
+  - Life bar for each player.
+  - Wrong answer or timeout -> lose life.
+- [ ] **Local Leaderboard**
+  - Save best scores in the browser.
+  - Show game ranking to improve replayability.
+- [ ] **Turn-Based Items System**
+  - Attack: increase difficulty, reduce time, double operation.
+  - Defense: shield, extra life.
+  - Advantage: multiplier, math hint.
+- [ ] **Avatar System**
+  - Avatar selection.
+  - Different characters.
+- [ ] **Life Loss Animations**
+  - Hit reaction on avatar.
+  - Falling animation.
+- [ ] **Daily Challenge Mode**
+  - Each day: special board, fixed difficulty, and global score.
+  - Focused on improving retention and replayability.
 
 ## 🌐 Deployment
 
