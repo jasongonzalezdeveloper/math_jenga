@@ -80,8 +80,8 @@ export default function ConfigPage() {
     }, [handleStart]);
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black px-4">
-            <main className="w-full max-w-xl rounded-lg bg-white p-6 text-black shadow-lg">
+        <div className="flex min-h-screen items-center justify-center bg-(--color-background) px-4 font-sans text-(--color-foreground)">
+            <main className="w-full max-w-xl rounded-lg border border-secondary/30 bg-(--color-surface) p-6 text-(--color-foreground) shadow-lg">
                 <div className="mb-4 flex justify-end">
                     <LanguageSelector />
                 </div>
@@ -89,15 +89,16 @@ export default function ConfigPage() {
                 <h1 className="text-3xl font-bold text-center">{t("config.title")}</h1>
 
                 <div className="mt-6 space-y-3 text-left">
-                    <div className="rounded border border-zinc-300 p-4">
+                    <div className="rounded border border-info/35 bg-(--color-background) p-4">
                         <div className="font-semibold">{t("config.defaultTitle")}</div>
-                        <p className="mt-1 text-sm text-zinc-700">
+                        <p className="mt-1 text-sm text-(--color-foreground)">
                             {t("config.defaultDescription")}
                         </p>
                         <label className="mb-2 flex items-center gap-2">
                             <input
                                 ref={defaultSettingsRef}
                                 type="checkbox"
+                                className="accent-(--color-primary)"
                                 checked={isDefaultSelected}
                                 onChange={(event) => {
                                     if (event.target.checked) {
@@ -113,6 +114,7 @@ export default function ConfigPage() {
                             <input
                                 ref={oneLifeRef}
                                 type="checkbox"
+                                className="accent-(--color-primary)"
                                 checked={settings.defeatConditions.includes("oneLife")}
                                 onChange={() => toggleDefeatCondition("oneLife")}
                                 onKeyDown={(event) => handleOptionArrowNavigation(event, 1)}
@@ -123,6 +125,7 @@ export default function ConfigPage() {
                             <input
                                 ref={shakeRef}
                                 type="checkbox"
+                                className="accent-(--color-primary)"
                                 checked={settings.defeatConditions.includes("shake")}
                                 onChange={() => toggleDefeatCondition("shake")}
                                 onKeyDown={(event) => handleOptionArrowNavigation(event, 2)}
@@ -134,7 +137,7 @@ export default function ConfigPage() {
 
                 <button
                     onClick={handleStart}
-                    className="mt-6 w-full rounded bg-blue-600 px-4 py-3 text-white hover:bg-blue-700 transition-colors"
+                    className="mt-6 w-full rounded bg-primary px-4 py-3 text-white transition-all hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2"
                 >
                     {t("config.startGame")}
                 </button>

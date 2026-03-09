@@ -54,7 +54,7 @@ export function LanguageSelector({ className }: LanguageSelectorProps) {
             <button
                 type="button"
                 onClick={() => setIsOpen((prev) => !prev)}
-                className="inline-flex items-center gap-2 rounded bg-white px-2 py-2 text-sm text-black shadow-md transition-colors hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                className="inline-flex items-center gap-2 rounded border border-secondary/35 bg-(--color-surface) px-2 py-2 text-sm text-(--color-foreground) shadow-md transition-colors hover:bg-(--color-background) focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-secondary)"
                 aria-haspopup="listbox"
                 aria-expanded={isOpen}
                 aria-label={t("language.label")}
@@ -69,7 +69,7 @@ export function LanguageSelector({ className }: LanguageSelectorProps) {
                 <div
                     role="listbox"
                     aria-label={t("language.label")}
-                    className="absolute right-0 mt-2 w-36 overflow-hidden rounded border border-zinc-300 bg-white text-black shadow-lg"
+                    className="absolute right-0 mt-2 w-36 overflow-hidden rounded border border-secondary/35 bg-(--color-surface) text-(--color-foreground) shadow-lg"
                 >
                     {LANGUAGE_OPTIONS.map((option) => {
                         const isActive = language === option.code;
@@ -83,7 +83,7 @@ export function LanguageSelector({ className }: LanguageSelectorProps) {
                                     setLanguage(option.code);
                                     setIsOpen(false);
                                 }}
-                                className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-black hover:bg-zinc-100 ${isActive ? "bg-zinc-100 font-semibold" : ""}`}
+                                className={`flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-(--color-foreground) hover:bg-(--color-background) ${isActive ? "bg-secondary/20 font-semibold" : ""}`}
                             >
                                 <ReactCountryFlag countryCode={option.countryCode} svg style={{ width: "1.2em", height: "1.2em" }} />
                                 <span>{t(option.labelKey)}</span>

@@ -159,13 +159,13 @@ const QuestionModal = () => {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 text-black">
-      <div className="bg-white rounded-lg shadow-lg p-6 w-80">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 text-(--color-foreground)">
+      <div className="w-80 rounded-lg border border-secondary/35 bg-(--color-surface) p-6 shadow-lg">
         <h2 className="text-2xl font-bold mb-4 text-center ">
           {t("question.title")}
         </h2>
 
-        <div className="bg-blue-100 p-4 rounded mb-6 text-center">
+        <div className="mb-6 rounded bg-info/20 p-4 text-center">
           <p className="text-xl font-semibold ">{question}</p>
         </div>
 
@@ -184,7 +184,7 @@ const QuestionModal = () => {
               setUserAnswer(normalizedValue);
             }}
             placeholder={t("question.placeholder")}
-            className="w-full px-4 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-600"
+            className="w-full rounded border border-info/35 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-(--color-secondary)"
             onKeyDown={(e) => e.key === "Enter" && handleSubmit()}
             disabled={feedback !== null}
           />
@@ -204,7 +204,7 @@ const QuestionModal = () => {
               });
             }}
             disabled={feedback !== null}
-            className="rounded border border-gray-300 px-3 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 transition-colors disabled:cursor-not-allowed disabled:opacity-50"
+            className="rounded bg-secondary px-3 py-2 text-sm font-semibold text-white transition-all hover:brightness-95 disabled:cursor-not-allowed disabled:opacity-50"
             aria-label="Cambiar signo"
             title="Cambiar signo"
           >
@@ -215,8 +215,8 @@ const QuestionModal = () => {
         {feedback && (
           <div
             className={`p-3 rounded mb-4 text-center font-semibold ${feedback === "correct"
-              ? "bg-green-100 text-green-800"
-              : "bg-red-100 text-red-800"
+              ? "bg-success/25 text-(--color-foreground)"
+              : "bg-danger/25 text-(--color-foreground)"
               }`}
           >
             {feedback === "correct"
@@ -230,13 +230,13 @@ const QuestionModal = () => {
             <>
               <button
                 onClick={handleSubmit}
-                className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+                className="flex-1 rounded bg-primary py-2 text-white transition-all hover:brightness-95"
               >
                 {t("question.verify")}
               </button>
               <button
                 onClick={handleClose}
-                className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition-colors"
+                className="flex-1 rounded bg-warning py-2 text-white transition-all hover:brightness-95"
               >
                 {t("question.close")}
               </button>
@@ -248,13 +248,13 @@ const QuestionModal = () => {
                   setUserAnswer("");
                   setFeedback(null);
                 }}
-                className="flex-1 bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition-colors"
+                className="flex-1 rounded bg-primary py-2 text-white transition-all hover:brightness-95"
               >
                 {t("question.retry")}
               </button>
               <button
                 onClick={handleClose}
-                className="flex-1 bg-gray-400 text-white py-2 rounded hover:bg-gray-500 transition-colors"
+                className="flex-1 rounded bg-warning py-2 text-white transition-all hover:brightness-95"
               >
                 {t("question.close")}
               </button>

@@ -41,7 +41,7 @@ export function ShortcutHelpModal({
                 <button
                     type="button"
                     onClick={toggleColorblindMode}
-                    className="rounded-full bg-white p-2 text-zinc-700 shadow-md transition-colors hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                    className="rounded-full border border-secondary/35 bg-surface p-2 text-foreground shadow-md transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
                     aria-label={isColorblindMode ? t("colorblind.disable") : t("colorblind.enable")}
                     title={isColorblindMode ? t("colorblind.disable") : t("colorblind.enable")}
                 >
@@ -51,7 +51,7 @@ export function ShortcutHelpModal({
                 <button
                     type="button"
                     onClick={onOpen}
-                    className="rounded-full bg-white p-2 text-zinc-700 shadow-md transition-colors hover:bg-zinc-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600"
+                    className="rounded-full border border-secondary/35 bg-surface p-2 text-foreground shadow-md transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
                     aria-label={t("shortcuts.infoAria")}
                     title={t("shortcuts.infoTitle")}
                 >
@@ -62,7 +62,7 @@ export function ShortcutHelpModal({
             {isOpen && (
                 <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/50 px-4">
                     <div
-                        className="w-full max-w-md rounded-lg bg-white p-6 text-left text-black shadow-lg"
+                        className="w-full max-w-md rounded-lg border border-secondary/35 bg-surface p-6 text-left text-foreground shadow-lg"
                         role="dialog"
                         aria-modal="true"
                         aria-labelledby="shortcuts-title"
@@ -94,7 +94,7 @@ export function ShortcutHelpModal({
                         <button
                             type="button"
                             onClick={onClose}
-                            className="mt-6 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+                            className="mt-6 rounded bg-primary px-4 py-2 text-white transition-all hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2"
                         >
                             {t("shortcuts.accept")}
                         </button>

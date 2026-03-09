@@ -21,12 +21,12 @@ export const JENGA_CONFIG = {
         baseScale: 1000,
     },
     colorsById: {
-        1: "#0070f3",
-        2: "#388e4a",
-        3: "#da3036",
-        4: "#f1a10d",
-        5: "#a1a1a1",
-        6: "#ad1966",
+        1: "#0052cc",
+        2: "#007f8c",
+        3: "#b95f00",
+        4: "#6a3fb8",
+        5: "#1c7c54",
+        6: "#b02a37",
     } as Record<number, string>,
     question: {
         minOperand: 1,

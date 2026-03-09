@@ -38,7 +38,7 @@ export default function GamePage() {
     }, [openShortcutModal]);
 
     return (
-        <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
+        <div className="flex min-h-screen items-center justify-center bg-(--color-background) font-sans text-(--color-foreground)">
             <main className="flex w-full flex-col items-center justify-center px-4 text-center">
                 <ShortcutHelpModal
                     isOpen={isShortcutModalOpen}
@@ -67,12 +67,12 @@ export default function GamePage() {
                 <QuestionModal />
                 {lifes === 0 && (
                     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-                        <div className="rounded-lg bg-white px-8 py-6 text-center text-black shadow-lg">
+                        <div className="rounded-lg border border-danger/35 bg-(--color-surface) px-8 py-6 text-center text-(--color-foreground) shadow-lg">
                             <h2 className="text-3xl font-bold">{t("game.towerCollapsed")}</h2>
                             <button
                                 type="button"
                                 onClick={handleRestart}
-                                className="mt-4 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2"
+                                className="mt-4 rounded bg-(--color-danger) px-4 py-2 text-white transition-all hover:brightness-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-(--color-warning) focus-visible:ring-offset-2"
                             >
                                 {t("game.restart")}
                             </button>

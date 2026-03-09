@@ -112,7 +112,7 @@ export function JengaTower({
                                             data-protected-row={isProtectedTopRow ? "true" : "false"}
                                             disabled={isCubeSelectionBlocked}
                                             aria-label={`${cube.isEmpty ? "Espacio vacio" : `Bloque ${cube.id}`}, fila ${actualRowIndex + 1}, columna ${cube.col + 1}${isCubeSelectionBlocked ? ", no seleccionable" : ""}${isShakeEnabled && isHighRisk ? ", riesgo alto" : ""}`}
-                                            className={`relative flex items-center justify-center text-white border border-black/20 shadow-sm mx-1 select-none h-10 w-15 ${isCubeSelectionBlocked ? "cursor-not-allowed" : "cursor-pointer"} ${isHoveredHighlightCube ? "ring-2 ring-blue-600 ring-offset-2" : ""} ${isShakeEnabled && isHoveredNonEmptyCube && isHighRisk ? "animate-pulse ring-2 ring-red-600" : ""}`}
+                                            className={`relative mx-1 flex h-10 w-15 select-none items-center justify-center border border-black/20 text-white shadow-sm ${isCubeSelectionBlocked ? "cursor-not-allowed" : "cursor-pointer"} ${isHoveredHighlightCube ? "ring-2 ring-secondary ring-offset-2" : ""} ${isShakeEnabled && isHoveredNonEmptyCube && isHighRisk ? "animate-pulse ring-2 ring-danger" : ""}`}
                                             style={cubeStyle}
                                             onClick={() => onCubeActivate(cube)}
                                             onMouseEnter={() => onCubeHover(cubeHoverKey)}
@@ -120,7 +120,7 @@ export function JengaTower({
                                         >
                                             {!cube.isEmpty && <span className="text-sm font-medium">{cube.id}</span>}
                                             {isShakeEnabled && isHoveredNonEmptyCube && isHighRisk && (
-                                                <span className="absolute -top-2 -right-2 rounded bg-red-600 px-1 text-[10px] font-bold text-white">
+                                                <span className="absolute -right-2 -top-2 rounded bg-danger px-1 text-[10px] font-bold text-white">
                                                     !
                                                 </span>
                                             )}

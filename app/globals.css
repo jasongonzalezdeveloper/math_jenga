@@ -1,21 +1,42 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #f8fbff;
+  --foreground: #14213d;
+  --primary: #6f42c1;
+  --secondary: #00a6a6;
+  --info: #0052cc;
+  --success: #1f9d55;
+  --warning: #c96a00;
+  --danger: #c6285a;
+  --surface: #fff4cf;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-surface: var(--surface);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #111a2e;
+    --foreground: #f4f8ff;
+    --primary: #8b5cf6;
+    --secondary: #17b8b8;
+    --info: #1d4ed8;
+    --success: #2fbf71;
+    --warning: #b45309;
+    --danger: #e11d48;
+    --surface: #1b2846;
   }
 }
 
@@ -26,7 +47,7 @@ body {
 }
 
 html.colorblind-mode {
-  filter: saturate(0.7) hue-rotate(-20deg) contrast(1.15);
+  filter: saturate(0.85) contrast(1.2) brightness(1.03);
 }
 
 @keyframes tilt-shaking {
