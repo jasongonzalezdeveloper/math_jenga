@@ -8,6 +8,10 @@ export const resources = {
                 useDefault: "Usar configuración por defecto",
                 oneLife: "Muerte súbita (1 vida)",
                 loseChance: "Posibilidad de derrumbar la torre",
+                difficultyLabel: "Dificultad",
+                difficultyEasy: "Fácil (45s)",
+                difficultyNormal: "Medio (30s)",
+                difficultyHard: "Difícil (15s)",
                 startGame: "Iniciar partida",
             },
             game: {
@@ -60,6 +64,8 @@ export const resources = {
             question: {
                 title: "¿Cuál es el resultado?",
                 placeholder: "Escribe tu respuesta",
+                timeLeft: "Tiempo restante: {{count}}s",
+                timeOut: "Se acabó el tiempo",
                 correct: "¡Correcto!",
                 incorrect: "Incorrecto, intenta de nuevo",
                 verify: "Verificar",
@@ -77,6 +83,10 @@ export const resources = {
                 useDefault: "Use default settings",
                 oneLife: "Sudden death",
                 loseChance: "Chance to collapse the tower",
+                difficultyLabel: "Difficulty",
+                difficultyEasy: "Easy (45s)",
+                difficultyNormal: "Medium (30s)",
+                difficultyHard: "Hard (15s)",
                 startGame: "Start game",
             },
             game: {
@@ -129,6 +139,8 @@ export const resources = {
             question: {
                 title: "What is the result?",
                 placeholder: "Type your answer",
+                timeLeft: "Time left: {{count}}s",
+                timeOut: "Time is up",
                 correct: "Correct!",
                 incorrect: "Incorrect, try again",
                 verify: "Check",

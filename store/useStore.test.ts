@@ -38,4 +38,14 @@ describe("useStore settings and lives", () => {
 
         expect(useStore.getState().lifes).toBe(3);
     });
+
+    it("sets difficulty and keeps medium as default", () => {
+        expect(useStore.getState().settings.difficulty).toBe("normal");
+
+        useStore.getState().setDifficulty("easy");
+        expect(useStore.getState().settings.difficulty).toBe("easy");
+
+        useStore.getState().setDifficulty("hard");
+        expect(useStore.getState().settings.difficulty).toBe("hard");
+    });
 });

@@ -153,6 +153,8 @@ export const useJengaLogic = () => {
             topRowIndex,
         );
 
+        const movedCubeQuestion = createCubeQuestion();
+
         const newTower = jengaTower.map((row) =>
             row.map((currentCube) => {
                 if (currentCube.row === cube.row && currentCube.col === cube.col) {
@@ -160,6 +162,8 @@ export const useJengaLogic = () => {
                         ...cubeClicked,
                         row: currentCube.row,
                         col: currentCube.col,
+                        question: movedCubeQuestion.question,
+                        answer: movedCubeQuestion.answer,
                         isEmpty: false,
                     };
                 }

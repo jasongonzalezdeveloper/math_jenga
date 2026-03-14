@@ -5,11 +5,12 @@ import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { LanguageSelector } from "@/components/common/LanguageSelector";
 import { useCallback, useEffect, useMemo, useRef, type KeyboardEvent as ReactKeyboardEvent } from "react";
 import { useRouter } from "next/navigation";
+import type { Difficulty } from "@/models/GameSettings";
 
 export default function ConfigPage() {
     const router = useRouter();
     const { t } = useAppTranslation();
-    const { settings, setDefeatConditions, toggleDefeatCondition, resetLifes } = useStore();
+    const { settings, setDefeatConditions, toggleDefeatCondition, setDifficulty, resetLifes } = useStore();
     const defaultSettingsRef = useRef<HTMLInputElement>(null);
     const oneLifeRef = useRef<HTMLInputElement>(null);
     const shakeRef = useRef<HTMLInputElement>(null);
@@ -132,6 +133,24 @@ export default function ConfigPage() {
                             />
                             <span>{t("config.loseChance")}</span>
                         </label>
+
+                        <div className="mt-4">
+                            <label className="mb-1 block font-semibold" htmlFor="difficulty-selector">
+                                {t("config.difficultyLabel")}
+                            </label>
+                            <select
+                                id="difficulty-selector"
+                                className="w-full rounded border border-info/35 bg-(--color-surface) px-3 py-2 focus:outline-none focus:ring-2 focus:ring-(--color-secondary)"
+                                value={settings.difficulty}
+                                onChange={(event) => {
+                                    setDifficulty(event.target.value as Difficulty);
+                                }}
+                            >
+                                <option value="easy">{t("config.difficultyEasy")}</option>
+                                <option value="normal">{t("config.difficultyNormal")}</option>
+                                <option value="hard">{t("config.difficultyHard")}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 

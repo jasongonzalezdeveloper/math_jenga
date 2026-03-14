@@ -1,5 +1,5 @@
 import { Cube } from '@/models/Cube';
-import { DEFAULT_GAME_SETTINGS, DefeatCondition, GameSettings } from '@/models/GameSettings';
+import { DEFAULT_GAME_SETTINGS, DefeatCondition, Difficulty, GameSettings } from '@/models/GameSettings';
 import { create } from 'zustand';
 
 interface StoreState {
@@ -10,6 +10,7 @@ interface StoreState {
     settings: GameSettings;
     setDefeatConditions: (defeatConditions: DefeatCondition[]) => void;
     toggleDefeatCondition: (condition: DefeatCondition) => void;
+    setDifficulty: (difficulty: Difficulty) => void;
     resetLifes: () => void;
     cubeClicked: Cube | null;
     setCubeClicked: (cube: Cube | null) => void;
@@ -43,6 +44,12 @@ export const useStore = create<StoreState>((set) => ({
             },
         };
     }),
+    setDifficulty: (difficulty: Difficulty) => set((state) => ({
+        settings: {
+            ...state.settings,
+            difficulty,
+        },
+    })),
     resetLifes: () => set((state) => ({
         lifes: state.settings.defeatConditions.includes('oneLife') ? 1 : 3,
         cubeClicked: null,

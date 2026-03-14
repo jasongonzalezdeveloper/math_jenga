@@ -3,6 +3,7 @@ import { useEffect, useReducer, useRef, useState, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { APP_MODAL, APP_VIEWPORT } from "@/lib/appVariables";
+import { getQuestionTimeLimitByDifficulty } from "@/models/GameSettings";
 
 type ModalReadyState = {
   status: "hidden" | "waiting" | "ready";
@@ -69,6 +70,8 @@ const QuestionModal = () => {
   const isModalReady =
     modalReadyState.status === "ready" && modalReadyState.cubeKey === currentCubeKey;
   const isOpen = hasBaseVisibility && isModalReady;
+  const questionTimeLimitSeconds = getQuestionTimeLimitByDifficulty(settings.difficulty);
+  const [timeLeftSeconds, setTimeLeftSeconds] = useState(questionTimeLimitSeconds);
 
   useEffect(() => {
     if (!hasBaseVisibility || !currentCubeKey) {
@@ -135,6 +138,36 @@ const QuestionModal = () => {
   }, [userAnswer, answer, setIsCorrect, decrease, closeForPlacement]);
 
   useEffect(() => {
+    if (!isOpen) {
+      return;
+    }
+
+    setTimeLeftSeconds(questionTimeLimitSeconds);
+  }, [isOpen, currentCubeKey, questionTimeLimitSeconds]);
+
+  useEffect(() => {
+    if (!isOpen || feedback !== null || timeLeftSeconds <= 0) {
+      return;
+    }
+
+    const intervalId = window.setInterval(() => {
+      setTimeLeftSeconds((previous) => Math.max(0, previous - 1));
+    }, 1000);
+
+    return () => window.clearInterval(intervalId);
+  }, [isOpen, feedback, timeLeftSeconds]);
+
+  useEffect(() => {
+    if (!isOpen || feedback !== null || timeLeftSeconds > 0) {
+      return;
+    }
+
+    decrease();
+    setFeedback("incorrect");
+    setIsCorrect(false);
+  }, [decrease, feedback, isOpen, setIsCorrect, timeLeftSeconds]);
+
+  useEffect(() => {
     if (isOpen && inputRef.current) {
       inputRef.current.focus();
     }
@@ -168,6 +201,18 @@ const QuestionModal = () => {
         <div className="mb-6 rounded bg-info/20 p-4 text-center">
           <p className="text-xl font-semibold ">{question}</p>
         </div>
+
+        <p
+          className={`mb-3 text-center text-sm font-semibold ${timeLeftSeconds <= 5
+            ? "text-danger"
+            : "text-(--color-foreground)"
+            }`}
+          aria-live="polite"
+        >
+          {timeLeftSeconds > 0
+            ? t("question.timeLeft", { count: timeLeftSeconds })
+            : t("question.timeOut")}
+        </p>
 
         <div className="mb-4 flex gap-2">
           <input
@@ -247,6 +292,7 @@ const QuestionModal = () => {
                 onClick={() => {
                   setUserAnswer("");
                   setFeedback(null);
+                  setTimeLeftSeconds(questionTimeLimitSeconds);
                 }}
                 className="flex-1 rounded bg-primary py-2 text-white transition-all hover:brightness-95"
               >
