@@ -11,6 +11,16 @@ export const getQuestionTimeLimitByDifficulty = (difficulty: Difficulty): number
     return QUESTION_TIME_LIMIT_BY_DIFFICULTY[difficulty];
 };
 
+export const SCORE_MULTIPLIER_BY_DIFFICULTY: Record<Difficulty, number> = {
+    easy: 2,
+    normal: 3,
+    hard: 4,
+};
+
+export const getScoreMultiplierByDifficulty = (difficulty: Difficulty): number => {
+    return SCORE_MULTIPLIER_BY_DIFFICULTY[difficulty];
+};
+
 export interface GameSettings {
     defeatConditions: DefeatCondition[];
     suddenDeath: boolean;

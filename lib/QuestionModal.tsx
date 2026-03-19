@@ -3,7 +3,7 @@ import { useEffect, useReducer, useRef, useState, useCallback } from "react";
 import { useStore } from "@/store/useStore";
 import { useAppTranslation } from "@/hooks/useAppTranslation";
 import { APP_MODAL, APP_VIEWPORT } from "@/lib/appVariables";
-import { getQuestionTimeLimitByDifficulty } from "@/models/GameSettings";
+import { getQuestionTimeLimitByDifficulty, getScoreMultiplierByDifficulty } from "@/models/GameSettings";
 
 type ModalReadyState = {
   status: "hidden" | "waiting" | "ready";
@@ -50,7 +50,7 @@ const modalReadyReducer = (state: ModalReadyState, action: ModalReadyAction): Mo
 
 const QuestionModal = () => {
   const { t } = useAppTranslation();
-  const { cubeClicked, decrease, setIsCorrect, clearCube, lifes, settings } = useStore();
+  const { cubeClicked, decrease, setIsCorrect, clearCube, lifes, settings, addScore } = useStore();
   const { question, answer } = cubeClicked || {};
   const [userAnswer, setUserAnswer] = useState("");
   const [feedback, setFeedback] = useState<"correct" | "incorrect" | null>(null);
@@ -123,6 +123,8 @@ const QuestionModal = () => {
     if (userNum === answer) {
       setFeedback("correct");
       setIsCorrect(true);
+      const multiplier = getScoreMultiplierByDifficulty(settings.difficulty);
+      addScore(timeLeftSeconds * multiplier);
       const isMobile = window.matchMedia(`(max-width: ${APP_VIEWPORT.mobileMaxWidthPx}px)`).matches;
       if (APP_MODAL.scrollOnCorrectInMobile && isMobile) {
         window.scrollTo({ top: 0, behavior: APP_MODAL.scrollBehaviorOnCorrect });

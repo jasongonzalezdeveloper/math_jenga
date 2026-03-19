@@ -1,4 +1,4 @@
-import { FiEye, FiEyeOff, FiInfo } from "react-icons/fi";
+import { FiEye, FiEyeOff, FiInfo, FiSettings } from "react-icons/fi";
 import {
     BsArrowDownSquare,
     BsArrowLeftSquare,
@@ -15,12 +15,14 @@ interface ShortcutHelpModalProps {
     isOpen: boolean;
     onOpen: () => void;
     onClose: () => void;
+    onOpenConfig: () => void;
 }
 
 export function ShortcutHelpModal({
     isOpen,
     onOpen,
     onClose,
+    onOpenConfig,
 }: ShortcutHelpModalProps) {
     const { isColorblindMode, toggleColorblindMode } = useColorblindMode();
     const { t } = useAppTranslation();
@@ -90,6 +92,16 @@ export function ShortcutHelpModal({
         <>
             <div className="fixed right-4 top-4 z-40 flex items-center gap-2">
                 <LanguageSelector />
+
+                <button
+                    type="button"
+                    onClick={onOpenConfig}
+                    className="cursor-pointer rounded-full border border-secondary/35 bg-surface p-2 text-foreground shadow-md transition-colors hover:bg-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+                    aria-label={t("statusPanel.settingsAria")}
+                    title={t("statusPanel.settingsTitle")}
+                >
+                    <FiSettings className="h-5 w-5" />
+                </button>
 
                 <button
                     type="button"

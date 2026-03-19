@@ -18,6 +18,9 @@ interface StoreState {
     isCorrect: boolean;
     setIsCorrect: (isCorrect: boolean) => void;
     resetIsCorrect: () => void;
+    score: number;
+    addScore: (points: number) => void;
+    resetScore: () => void;
 }
 
 export const useStore = create<StoreState>((set) => ({
@@ -54,6 +57,7 @@ export const useStore = create<StoreState>((set) => ({
         lifes: state.settings.defeatConditions.includes('oneLife') ? 1 : 3,
         cubeClicked: null,
         isCorrect: false,
+        score: 0,
     })),
     cubeClicked: null,
     setCubeClicked: (cube: Cube | null) => set({ cubeClicked: cube }),
@@ -61,4 +65,7 @@ export const useStore = create<StoreState>((set) => ({
     isCorrect: false,
     setIsCorrect: (isCorrect: boolean) => set({ isCorrect }),
     resetIsCorrect: () => set({ isCorrect: false }),
+    score: 0,
+    addScore: (points: number) => set((state) => ({ score: state.score + points })),
+    resetScore: () => set({ score: 0 }),
 }));

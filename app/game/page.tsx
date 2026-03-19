@@ -13,7 +13,7 @@ import { ShortcutHelpModal } from "@/components/game/ShortcutHelpModal";
 export default function GamePage() {
     const router = useRouter();
     const { t } = useAppTranslation();
-    const { lifes, isCorrect } = useStore();
+    const { lifes, isCorrect, score } = useStore();
     const [isRightSide, setIsRightSide] = useState(false);
 
     const handleRotate = useCallback(() => {
@@ -44,6 +44,7 @@ export default function GamePage() {
                     isOpen={isShortcutModalOpen}
                     onOpen={openShortcutModal}
                     onClose={closeShortcutModal}
+                    onOpenConfig={handleBackToConfig}
                 />
                 <p className="sr-only" aria-live="polite">
                     {t("game.screenReaderHint")}
@@ -51,9 +52,9 @@ export default function GamePage() {
                 <div className="relative w-full flex items-center justify-center">
                     <GameStatusPanel
                         lifes={lifes}
+                        score={score}
                         isRightSide={isRightSide}
                         onRotate={handleRotate}
-                        onOpenConfig={handleBackToConfig}
                     />
 
                     <div className="w-full flex justify-center pt-20 lg:pt-0">

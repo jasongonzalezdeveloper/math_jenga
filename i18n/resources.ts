@@ -21,6 +21,7 @@ export const resources = {
             },
             statusPanel: {
                 lifesText: "Tienes {{count}} vidas",
+                scoreText: "Puntos: {{count}}",
                 settingsAria: "Configuración",
                 settingsTitle: "Configuración (atajo C)",
                 rotateLeft: "Girar a la izquierda",
@@ -96,6 +97,7 @@ export const resources = {
             },
             statusPanel: {
                 lifesText: "You have {{count}} lives",
+                scoreText: "Score: {{count}}",
                 settingsAria: "Settings",
                 settingsTitle: "Settings (shortcut C)",
                 rotateLeft: "Rotate left",
