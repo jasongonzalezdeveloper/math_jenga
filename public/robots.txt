@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jasongonzalezdeveloper.github.io/math_jenga/sitemap.xml
